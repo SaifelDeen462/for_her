@@ -1,0 +1,122 @@
+:root {
+    --black: #000000;
+    --pink: #ff4d6d;
+    --red: #c9184a;
+    --deep-blue: #001233;
+    --blue: #0077b6;
+    --baby-blue: #caf0f8;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: var(--black);
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+    height: 100%;
+}
+
+.night-sky {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, var(--deep-blue) 0%, var(--black) 100%);
+    z-index: -1;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Tulip Styling */
+.flower {
+    position: relative;
+    animation: sway 4s ease-in-out infinite;
+}
+
+.tulip-head {
+    position: relative;
+    width: 70px;
+    height: 90px;
+    z-index: 2;
+}
+
+.petal-center {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--pink);
+    border-radius: 50% 50% 10% 10%;
+    box-shadow: inset 0 0 20px var(--red), 0 0 15px var(--pink);
+}
+
+.petal-left, .petal-right {
+    position: absolute;
+    width: 50px;
+    height: 75px;
+    background: var(--pink);
+    border-radius: 50%;
+    top: 5px;
+}
+
+.petal-left { left: -20px; transform: rotate(-25deg); }
+.petal-right { right: -20px; transform: rotate(25deg); }
+
+.stem {
+    width: 8px;
+    height: 150px;
+    background: linear-gradient(to bottom, #1b4332, var(--black));
+    margin: -10px auto 0;
+}
+
+.leaf {
+    width: 40px;
+    height: 20px;
+    background: #2d6a4f;
+    border-radius: 0 50% 0 50%;
+    position: absolute;
+    bottom: 50px;
+    left: 10px;
+    transform: rotate(-30deg);
+}
+
+/* Text Animations */
+.text-wrapper {
+    margin-top: 50px;
+    text-align: center;
+}
+
+.glow-text {
+    font-size: 1.5rem;
+    color: var(--baby-blue);
+    text-shadow: 0 0 10px var(--blue);
+    opacity: 0;
+    animation: fadeInUp 2s forwards 1s;
+}
+
+.sub-text {
+    font-style: italic;
+    color: white;
+    opacity: 0;
+    animation: fadeInUp 2s forwards 2s;
+}
+
+.sub-text span {
+    color: var(--pink);
+    font-weight: bold;
+}
+
+@keyframes sway {
+    0%, 100% { transform: rotate(-2deg) translateY(0); }
+    50% { transform: rotate(2deg) translateY(-10px); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
