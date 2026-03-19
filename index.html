@@ -4,545 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For Sajda</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400&family=Noto+Sans+SC:wght@300&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Raleway:wght@100;200;300&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #000814;
-            --pink: #ff85a1;
-            --red: #c9184a;
-            --baby-blue: #a2d2ff;
+            --bg: #06030a;
+            --rose: #c9184a;
+            --blush: #ffb3c1;
+            --ivory: #f5f0eb;
+            --gold: #c9a96e;
+            --midnight: #0d0015;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
-
-        body {
-            background-color: var(--bg);
-            color: white;
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-
-        /* Custom Cursor Trail */
-        #cursor {
-            position: fixed;
-            width: 8px;
-            height: 8px;
-            background: var(--baby-blue);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            box-shadow: 0 0 15px var(--baby-blue), 0 0 30px var(--baby-blue);
-        }
-
-        section {
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Flower Visuals */
-        .flower-container {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .svg-flower { width: 350px; height: 350px; filter: drop-shadow(0 0 40px rgba(255,133,161,0.25)); }
-
-        .stem {
-            width: 6px;
-            height: 200px;
-            background: linear-gradient(to bottom, #1b4332, #081c15);
-            margin-top: -20px;
-            border-radius: 10px;
-            position: relative;
-        }
-
-        .leaf {
-            position: absolute;
-            width: 70px;
-            height: 35px;
-            background: linear-gradient(45deg, #2d6a4f, #1b4332);
-            border-radius: 0 100% 0 100%;
-            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.3);
-        }
-        .leaf-left { top: 40px; left: -65px; transform: rotate(-25deg); }
-        .leaf-right { top: 80px; left: 5px; transform: rotate(205deg); }
-
-        /* Typography */
-        .text-wrap {
-            text-align: center;
-            z-index: 20;
-            margin-top: 30px;
-            padding: 25px 50px;
-            border-radius: 25px;
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        h1 {
-            font-size: 1.2rem;
-            letter-spacing: 7px;
-            font-weight: 200;
-            text-transform: uppercase;
-            background: linear-gradient(to right, #fff, var(--baby-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        p { color: var(--pink); font-style: italic; letter-spacing: 2px; margin-top: 10px; }
-
-        /* Chinese Section */
-        .chinese-text {
-            font-family: 'Noto Sans SC', sans-serif;
-            font-size: 3rem;
-            color: #fff;
-            text-shadow: 0 0 20px var(--red), 0 0 40px var(--red);
-            margin: 20px 0;
-        }
-
-        canvas { position: fixed; top: 0; left: 0; z-index: 0; pointer-events: none; }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 20px;
-            font-size: 0.6rem;
-            letter-spacing: 4px;
-            color: rgba(255,255,255,0.3);
-            text-transform: uppercase;
-        }
-    </style>
-</head>
-<body>
-
-    <div id="cursor"></div>
-    <canvas id="canvas"></canvas>
-
-    <section id="sec1">
-        <div class="flower-container">
-            <svg class="svg-flower tulip" viewBox="0 0 100 100">
-                <defs>
-                    <linearGradient id="tulipGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#ffb3c1" />
-                        <stop offset="100%" stop-color="#c9184a" />
-                    </linearGradient>
-                </defs>
-                <path class="p-back" d="M50 80 Q30 70 20 40 Q20 10 50 20 Q80 10 80 40 Q70 70 50 80" fill="#800e13" opacity="0.5"/>
-                <path class="p-left" d="M50 85 Q15 75 10 40 Q10 10 45 25 Q35 55 50 85" fill="url(#tulipGrad)" />
-                <path class="p-right" d="M50 85 Q85 75 90 40 Q90 10 55 25 Q65 55 50 85" fill="url(#tulipGrad)" />
-                <path class="p-center" d="M50 90 Q30 80 25 45 Q25 5 50 5 Q75 5 75 45 Q70 80 50 90" fill="url(#tulipGrad)" stroke="#ff4d6d" stroke-width="0.3"/>
-            </svg>
-            <div class="stem"><div class="leaf leaf-left"></div><div class="leaf leaf-right"></div></div>
-        </div>
-        <div class="text-wrap">
-            <h1>Until I can give it to you</h1>
-            <p>in real...</p>
-        </div>
-        <div class="scroll-indicator">Scroll to Bloom</div>
-    </section>
-
-    <section id="sec2">
-        <div class="flower-container">
-            <svg class="svg-flower rose" viewBox="0 0 100 100">
-                <path d="M50 15 Q75 15 85 40 T50 85 Q15 85 15 50 T50 15" fill="#5c0011" />
-                <path class="r-petal" d="M50 25 Q65 25 75 45 T50 75 Q25 75 25 45 T50 25" fill="#c9184a" opacity="0.8" />
-                <path class="r-petal" d="M50 35 Q55 35 65 50 T50 65 Q35 65 35 50 T50 35" fill="#ff4d6d" />
-                <circle cx="50" cy="50" r="5" fill="#ffb3c1" />
-                <path d="M50 45 A5 5 0 1 1 45 50" fill="none" stroke="#fff" stroke-width="0.5" opacity="0.5"/>
-            </svg>
-            <div class="stem"><div class="leaf leaf-left"></div><div class="leaf leaf-right"></div></div>
-        </div>
-        <div class="text-wrap">
-            <h1>You make my life</h1>
-            <p>worth living.</p>
-        </div>
-    </section>
-
-    <section id="sec3">
-        <div class="text-wrap" id="chinese-box" style="background: rgba(128, 14, 19, 0.1); border-color: rgba(201, 24, 74, 0.2);">
-            <h1>Sajda</h1>
-            <div class="chinese-text">我爱你，Sajda</div>
-            <p style="color: var(--baby-blue);">I Love You, Sajda</p>
-        </div>
-    </section>
-
-    <script>
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Custom Cursor
-        const cursor = document.getElementById('cursor');
-        window.addEventListener('mousemove', (e) => {
-            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
-        });
-
-        // Organic Floating Animations
-        gsap.to(".flower-container", {
-            y: -20,
-            rotation: 2,
-            duration: 4,
-            repeat: -1,
-            yoyo: true,
-            ease: "sine.inOut"
-        });
-
-        // Scroll Triggered Bloom for Tulip
-        gsap.to(".p-left", { scrollTrigger: { trigger: "#sec1", scrub: true }, rotation: -10, x: -5 });
-        gsap.to(".p-right", { scrollTrigger: { trigger: "#sec1", scrub: true }, rotation: 10, x: 5 });
-
-        // Rose Bloom Animation
-        gsap.from(".rose", {
-            scrollTrigger: {
-                trigger: "#sec2",
-                start: "top bottom",
-                end: "center center",
-                scrub: 1
-            },
-            scale: 0.5,
-            rotation: -45,
-            opacity: 0
-        });
-
-        // Chinese Box Entrance
-        gsap.from("#chinese-box", {
-            scrollTrigger: { trigger: "#sec3", start: "top center" },
-            y: 50,
-            opacity: 0,
-            duration: 1.5,
-            ease: "power4.out"
-        });
-
-        // Particle System
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 1.5;
-                this.speedY = Math.random() * 0.4 + 0.1;
-                this.color = Math.random() > 0.5 ? '#ff85a1' : '#a2d2ff';
-            }
-            update() {
-                this.y += this.speedY;
-                if (this.y > canvas.height) this.y = -10;
-            }
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.globalAlpha = 0.4;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        for (let i = 0; i < 70; i++) particles.push(new Particle());
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animate);
-        }
-        animate();
-    </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For Sajda</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400&family=Noto+Sans+SC:wght@300&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
-    <style>
-        :root {
-            --bg: #000000;
-            --pink: #ff85a1;
-            --red: #c9184a;
-            --baby-blue: #a2d2ff;
-            --deep-blue: #000814;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
-
-        body {
-            background-color: var(--bg);
-            color: white;
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-        }
-
-        /* Custom Cursor Trail */
-        #cursor {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background: var(--baby-blue);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            box-shadow: 0 0 15px var(--baby-blue);
-        }
-
-        section {
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Background Gradient Overlays */
-        .gradient-overlay {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* Flower Visuals */
-        .flower-container {
-            position: relative;
-            z-index: 10;
-            transform-origin: bottom center;
-        }
-
-        .svg-flower { width: 300px; height: 300px; filter: drop-shadow(0 0 30px rgba(255,133,161,0.2)); }
-
-        /* Typography */
-        .text-wrap {
-            text-align: center;
-            z-index: 20;
-            margin-top: 40px;
-            padding: 30px;
-            border-radius: 30px;
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            max-width: 90%;
-        }
-
-        h1 {
-            font-size: 1.4rem;
-            letter-spacing: 6px;
-            font-weight: 200;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            background: linear-gradient(to right, #fff, var(--baby-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        p { color: var(--pink); font-style: italic; letter-spacing: 2px; }
-
-        /* Chinese Secret Styling */
-        .chinese-text {
-            font-family: 'Noto Sans SC', sans-serif;
-            font-size: 2.5rem;
-            color: var(--red);
-            text-shadow: 0 0 20px rgba(201, 24, 74, 0.5);
-            margin-top: 20px;
-        }
-
-        .hint {
-            position: absolute;
-            bottom: 30px;
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.2);
-            letter-spacing: 4px;
-        }
-
-        canvas { position: fixed; top: 0; left: 0; z-index: 0; pointer-events: none; }
-    </style>
-</head>
-<body>
-
-    <div id="cursor"></div>
-    <canvas id="canvas"></canvas>
-
-    <section id="sec1">
-        <div class="gradient-overlay" style="background: radial-gradient(circle at 50% 50%, #001d3d 0%, #000 70%);"></div>
-        <div class="flower-container" id="tulip-wrap">
-            <svg class="svg-flower" viewBox="0 0 100 100">
-                <defs>
-                    <linearGradient id="tulipGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#ffb3c1" />
-                        <stop offset="100%" stop-color="#c9184a" />
-                    </linearGradient>
-                </defs>
-                <path d="M50 90 Q20 80 10 50 Q10 20 45 25 Q35 55 50 90" fill="url(#tulipGrad)" />
-                <path d="M50 90 Q80 80 90 50 Q90 20 55 25 Q65 55 50 90" fill="url(#tulipGrad)" />
-                <path d="M50 95 Q35 85 30 50 Q30 10 50 5 Q70 10 70 50 Q65 85 50 95" fill="url(#tulipGrad)" stroke="#800e13" stroke-width="0.2"/>
-            </svg>
-        </div>
-        <div class="text-wrap">
-            <h1>Until I can give it to you</h1>
-            <p>in real...</p>
-        </div>
-        <div class="hint">SCROLL TO BLOOM</div>
-    </section>
-
-    <section id="sec2">
-        <div class="gradient-overlay" style="background: radial-gradient(circle at 50% 50%, #1a0005 0%, #000 70%);"></div>
-        <div class="flower-container" id="rose-wrap">
-            <svg class="svg-flower" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="40" fill="#5c0011" />
-                <path d="M50 10 C70 10 90 30 90 50 C90 70 70 90 50 90 C30 90 10 70 10 50 C10 30 30 10 50 10" fill="#c9184a" opacity="0.6"/>
-                <path d="M50 20 C65 20 80 35 80 50 C80 65 65 80 50 80 C35 80 20 65 20 50 C20 35 35 20 50 20" fill="#ff4d6d" opacity="0.8"/>
-                <path d="M50 35 C60 35 65 45 65 50 C65 55 60 65 50 65 C40 65 35 55 35 50 C35 45 40 35 50 35" fill="#ffb3c1"/>
-                <path d="M50 45 A5 5 0 1 1 45 50" fill="none" stroke="#800e13" stroke-width="1" />
-            </svg>
-        </div>
-        <div class="text-wrap">
-            <h1>You make my life</h1>
-            <p>worth living.</p>
-        </div>
-    </section>
-
-    <section id="sec3">
-        <div class="gradient-overlay" style="background: radial-gradient(circle at 50% 50%, #000814 0%, #000 80%);"></div>
-        <div class="text-wrap" id="chinese-box">
-            <h1>Sajda</h1>
-            <div class="chinese-text">我爱你，Sajda</div>
-            <p style="margin-top:20px; color:var(--baby-blue);">Forever & Always</p>
-        </div>
-    </section>
-
-    <script>
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Custom Cursor Movement
-        const cursor = document.getElementById('cursor');
-        window.addEventListener('mousemove', (e) => {
-            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
-        });
-
-        // Flower Swaying Animations
-        gsap.to(".flower-container", {
-            rotation: 3,
-            y: -15,
-            duration: 3,
-            repeat: -1,
-            yoyo: true,
-            ease: "power1.inOut"
-        });
-
-        // Section 1 Animations
-        gsap.from("#tulip-wrap", { scale: 0.5, opacity: 0, duration: 2, ease: "elastic.out(1, 0.3)" });
-        
-        // Scroll-Triggered Blooms
-        gsap.to("#rose-wrap", {
-            scrollTrigger: {
-                trigger: "#sec2",
-                start: "top center",
-                end: "bottom center",
-                scrub: 1
-            },
-            scale: 1.2,
-            rotation: 360
-        });
-
-        gsap.from("#chinese-box", {
-            scrollTrigger: {
-                trigger: "#sec3",
-                start: "top center",
-                toggleActions: "play none none reverse"
-            },
-            y: 100,
-            opacity: 0,
-            duration: 1.5,
-            ease: "power4.out"
-        });
-
-        // Canvas Particle System
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 1.5;
-                this.speedY = Math.random() * 0.5 + 0.2;
-                this.opacity = Math.random();
-            }
-            update() {
-                this.y += this.speedY;
-                if (this.y > canvas.height) this.y = -10;
-            }
-            draw() {
-                ctx.fillStyle = `rgba(162, 210, 255, ${this.opacity})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        for (let i = 0; i < 80; i++) particles.push(new Particle());
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-            requestAnimationFrame(animate);
-        }
-        animate();
-    </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For You</title>
-    <style>
-        :root {
-            --bg: #000000;
-            --pink-light: #ffb3c1;
-            --pink-mid: #ff85a1;
-            --pink-dark: #ff4d6d;
-            --red-deep: #800e13;
-            --baby-blue: #caf0f8;
-            --blue-glow: #0077b6;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         html {
             scroll-behavior: smooth;
@@ -550,12 +28,48 @@
         }
 
         body {
-            background-color: var(--bg);
-            color: white;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--ivory);
+            font-family: 'Cormorant Garamond', serif;
             overflow-x: hidden;
+            cursor: none;
         }
 
+        /* ─── Custom Cursor ─── */
+        #cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease;
+            mix-blend-mode: difference;
+        }
+
+        #cursor-ring {
+            position: fixed;
+            width: 28px;
+            height: 28px;
+            border: 1px solid rgba(201, 169, 110, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transition: transform 0.25s cubic-bezier(0.23, 1, 0.32, 1),
+                        width 0.3s ease, height 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        /* ─── Fixed Canvas ─── */
+        #starfield {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ─── Sections ─── */
         section {
             height: 100vh;
             width: 100vw;
@@ -568,229 +82,433 @@
             overflow: hidden;
         }
 
-        /* Starry Particle Field */
-        #canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
+        .bg-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
             pointer-events: none;
         }
 
-        /* Flower Styling */
-        .flower-stage {
+        .content {
             position: relative;
-            z-index: 2;
-            animation: floating 6s ease-in-out infinite;
-            filter: drop-shadow(0 0 30px rgba(255, 77, 109, 0.3));
-        }
-
-        .flower-svg {
-            width: 250px;
-            height: 250px;
-        }
-
-        .stem-system {
+            z-index: 10;
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: -20px;
+            gap: 50px;
         }
 
+        /* ─── Section 1: Tulip ─── */
+        #sec1 .bg-layer {
+            background:
+                radial-gradient(ellipse 60% 60% at 50% 40%, #1a0028 0%, transparent 70%),
+                radial-gradient(ellipse 80% 40% at 50% 90%, #0d0015 0%, transparent 60%);
+        }
+
+        /* ─── Section 2: Rose ─── */
+        #sec2 .bg-layer {
+            background:
+                radial-gradient(ellipse 50% 50% at 50% 50%, #1c0010 0%, transparent 70%);
+        }
+
+        /* ─── Section 3: Declaration ─── */
+        #sec3 .bg-layer {
+            background:
+                radial-gradient(ellipse 70% 50% at 50% 50%, #0a0020 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 30% 30%, rgba(201,24,74,0.05) 0%, transparent 60%);
+        }
+
+        /* ─── Flower Styling ─── */
+        .flower-wrap {
+            animation: float 7s ease-in-out infinite;
+            filter: drop-shadow(0 30px 60px rgba(201, 24, 74, 0.25));
+            transform-origin: bottom center;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(-1deg); }
+            50%       { transform: translateY(-18px) rotate(1deg); }
+        }
+
+        .flower-svg { width: 220px; height: 280px; }
+
         .stem {
-            width: 6px;
-            height: 200px;
-            background: linear-gradient(to bottom, #1b4332, #081c15);
+            width: 4px;
+            height: 160px;
+            background: linear-gradient(to bottom, #2d6a4f, #0c1f0e);
             border-radius: 10px;
+            margin: 0 auto;
             position: relative;
         }
 
         .leaf {
             position: absolute;
-            width: 60px;
-            height: 30px;
-            background: linear-gradient(45deg, #2d6a4f, #1b4332);
-            border-radius: 0 100% 0 100%;
-            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.3);
+            width: 52px;
+            height: 24px;
+            background: linear-gradient(135deg, #2d6a4f, #1b4332);
+            border-radius: 0 80% 0 80%;
+            box-shadow: inset -4px -4px 8px rgba(0,0,0,0.4);
         }
 
-        .leaf-left { top: 40px; left: -55px; transform: rotate(-20deg); }
-        .leaf-right { top: 80px; left: 5px; transform: rotate(200deg); }
+        .leaf-l { top: 35px; left: -46px; transform: rotate(-25deg); }
+        .leaf-r { top: 75px; left: 4px;   transform: rotate(205deg); }
 
-        /* Professional Typography */
-        .text-container {
-            margin-top: 50px;
+        /* ─── Text Cards ─── */
+        .card {
             text-align: center;
-            z-index: 10;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            max-width: 80%;
+            padding: 36px 48px;
+            background: rgba(255, 255, 255, 0.025);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 2px;
+            border: 1px solid rgba(201, 169, 110, 0.15);
+            max-width: 520px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.9s ease, transform 0.9s ease;
         }
 
-        h1 {
-            font-size: 1.6rem;
-            font-weight: 300;
-            letter-spacing: 5px;
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Corner accents */
+        .card::before,
+        .card::after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-color: var(--gold);
+            border-style: solid;
+            opacity: 0.5;
+        }
+        .card::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+        .card::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+        .eyebrow {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 100;
+            font-size: 0.6rem;
+            letter-spacing: 8px;
             text-transform: uppercase;
-            margin-bottom: 10px;
-            background: linear-gradient(to right, #fff, var(--baby-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--gold);
+            opacity: 0.7;
+            margin-bottom: 18px;
         }
 
-        p {
-            font-size: 1rem;
-            color: var(--pink-light);
-            letter-spacing: 2px;
+        .headline {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 300;
+            font-size: 2rem;
+            line-height: 1.3;
+            letter-spacing: 1px;
+            color: var(--ivory);
+        }
+
+        .subtitle {
             font-style: italic;
+            font-size: 1.05rem;
+            color: var(--blush);
+            letter-spacing: 2px;
+            margin-top: 14px;
+            opacity: 0.85;
         }
 
-        /* Animations */
-        @keyframes floating {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(2deg); }
+        /* ─── Section 3 Special ─── */
+        .name-display {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 5rem;
+            font-weight: 300;
+            letter-spacing: 12px;
+            color: var(--ivory);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            line-height: 1;
         }
 
+        .arabic-line {
+            font-size: 1.8rem;
+            color: var(--gold);
+            letter-spacing: 3px;
+            font-style: italic;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .divider {
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            margin: 20px auto;
+        }
+
+        .forever {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 100;
+            font-size: 0.65rem;
+            letter-spacing: 10px;
+            text-transform: uppercase;
+            color: var(--blush);
+            opacity: 0.6;
+        }
+
+        /* ─── Scroll Hint ─── */
         .scroll-hint {
             position: absolute;
-            bottom: 20px;
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 0.7rem;
-            letter-spacing: 3px;
-            animation: pulse 2s infinite;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
+        .scroll-hint span {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 100;
+            font-size: 0.55rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: rgba(201, 169, 110, 0.4);
+            animation: fadeUpDown 2.5s ease-in-out infinite;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, rgba(201,169,110,0.4), transparent);
+            animation: fadeUpDown 2.5s ease-in-out infinite reverse;
+        }
+
+        @keyframes fadeUpDown {
+            0%, 100% { opacity: 0.3; transform: translateY(0); }
+            50%       { opacity: 0.8; transform: translateY(5px); }
+        }
+
+        /* ─── Petal Rain ─── */
+        .petal {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            animation: petalFall linear infinite;
+        }
+
+        @keyframes petalFall {
+            0%   { opacity: 0; transform: translateY(-20px) rotate(0deg); }
+            10%  { opacity: 0.6; }
+            90%  { opacity: 0.3; }
+            100% { opacity: 0; transform: translateY(110vh) rotate(720deg); }
         }
     </style>
 </head>
 <body>
 
-    <canvas id="canvas"></canvas>
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+    <canvas id="starfield"></canvas>
 
-    <section>
-        <div class="flower-stage">
-            <svg class="flower-svg" viewBox="0 0 100 100">
-                <defs>
-                    <linearGradient id="tulipGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" style="stop-color:var(--pink-light);stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:var(--pink-dark);stop-opacity:1" />
-                    </linearGradient>
-                    <filter id="shadow">
-                        <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
-                    </filter>
-                </defs>
-                <path d="M50 85 Q30 80 20 50 Q20 20 50 10 Q80 20 80 50 Q70 80 50 85" fill="var(--red-deep)" opacity="0.4"/>
-                <path d="M50 90 Q20 85 10 50 Q10 20 40 30 Q30 60 50 90" fill="url(#tulipGrad)" filter="url(#shadow)"/>
-                <path d="M50 90 Q80 85 90 50 Q90 20 60 30 Q70 60 50 90" fill="url(#tulipGrad)" filter="url(#shadow)"/>
-                <path d="M50 95 Q35 85 30 50 Q30 10 50 5 Q70 10 70 50 Q65 85 50 95" fill="url(#tulipGrad)" filter="url(#shadow)"/>
-            </svg>
-            <div class="stem-system">
-                <div class="stem"><div class="leaf leaf-left"></div><div class="leaf leaf-right"></div></div>
+    <!-- ─── Section 1: Opening ─── -->
+    <section id="sec1">
+        <div class="bg-layer"></div>
+        <div class="content">
+            <div class="flower-wrap" id="tulip">
+                <svg class="flower-svg" viewBox="0 0 100 120">
+                    <defs>
+                        <linearGradient id="tg1" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#ffb3c1"/>
+                            <stop offset="100%" stop-color="#c9184a"/>
+                        </linearGradient>
+                        <linearGradient id="tg2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#ff4d6d"/>
+                            <stop offset="100%" stop-color="#800e13"/>
+                        </linearGradient>
+                        <filter id="blur-soft">
+                            <feGaussianBlur stdDeviation="0.8" result="blur"/>
+                            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                        </filter>
+                    </defs>
+                    <!-- Petals -->
+                    <path d="M50 95 Q18 88 8 52 Q8 18 38 28 Q28 62 50 95" fill="url(#tg1)" filter="url(#blur-soft)" opacity="0.9"/>
+                    <path d="M50 95 Q82 88 92 52 Q92 18 62 28 Q72 62 50 95" fill="url(#tg1)" filter="url(#blur-soft)" opacity="0.9"/>
+                    <path d="M50 98 Q33 88 28 52 Q28 8 50 3 Q72 8 72 52 Q67 88 50 98" fill="url(#tg2)" filter="url(#blur-soft)"/>
+                    <!-- Highlight -->
+                    <path d="M50 40 Q46 28 48 8" stroke="rgba(255,230,235,0.35)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div class="stem">
+                    <div class="leaf leaf-l"></div>
+                    <div class="leaf leaf-r"></div>
+                </div>
+            </div>
+
+            <div class="card" id="card1">
+                <div class="eyebrow">A gift for you</div>
+                <div class="headline">Until I can give it<br>to you in real</div>
+                <div class="subtitle">with every intention</div>
             </div>
         </div>
-        <div class="text-container">
-            <h1>Until I can give it to you</h1>
-            <p>in real...</p>
+
+        <div class="scroll-hint">
+            <span>scroll</span>
+            <div class="scroll-line"></div>
         </div>
-        <div class="scroll-hint">SCROLL DOWN</div>
     </section>
 
-    <section>
-        <div class="flower-stage">
-            <svg class="flower-svg" viewBox="0 0 100 100">
-                <defs>
-                    <radialGradient id="roseCenter" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" style="stop-color:var(--pink-dark)" />
-                        <stop offset="100%" style="stop-color:var(--red-deep)" />
-                    </radialGradient>
-                </defs>
-                <circle cx="50" cy="50" r="40" fill="url(#roseCenter)" />
-                <path d="M50 10 Q70 10 85 35 T50 85 Q20 85 15 50 T50 10" fill="var(--pink-dark)" opacity="0.6"/>
-                <path d="M50 20 Q65 20 75 40 T50 75 Q30 75 25 45 T50 20" fill="var(--pink-mid)" opacity="0.8"/>
-                <path d="M50 30 Q60 30 65 45 T50 65 Q35 65 35 45 T50 30" fill="var(--pink-light)"/>
-                <path d="M50 40 A10 10 0 1 1 40 50" fill="none" stroke="var(--red-deep)" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            <div class="stem-system">
-                <div class="stem" style="height: 220px;"><div class="leaf leaf-left"></div><div class="leaf leaf-right"></div></div>
+    <!-- ─── Section 2: Rose ─── -->
+    <section id="sec2">
+        <div class="bg-layer"></div>
+        <div class="content">
+            <div class="flower-wrap" id="rose" style="animation-delay: -3s;">
+                <svg class="flower-svg" viewBox="0 0 100 120">
+                    <defs>
+                        <radialGradient id="rg1" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%"   stop-color="#ff4d6d"/>
+                            <stop offset="60%"  stop-color="#c9184a"/>
+                            <stop offset="100%" stop-color="#800e13"/>
+                        </radialGradient>
+                        <radialGradient id="rg2" cx="40%" cy="40%" r="60%">
+                            <stop offset="0%"   stop-color="#ffb3c1"/>
+                            <stop offset="100%" stop-color="#ff4d6d"/>
+                        </radialGradient>
+                    </defs>
+                    <!-- Outer petals -->
+                    <ellipse cx="50" cy="50" rx="40" ry="42" fill="url(#rg1)" opacity="0.5"/>
+                    <path d="M50 8  Q75 8  87 35 Q95 60 75 80 Q62 92 50 92 Q38 92 25 80 Q5 60 13 35 Q25 8 50 8"  fill="#c9184a" opacity="0.7"/>
+                    <!-- Mid petals -->
+                    <path d="M50 18 Q68 18 78 40 Q84 60 66 74 Q58 82 50 82 Q42 82 34 74 Q16 60 22 40 Q32 18 50 18" fill="#ff4d6d" opacity="0.85"/>
+                    <!-- Inner petals -->
+                    <path d="M50 28 Q62 28 68 46 Q72 60 60 68 Q55 73 50 73 Q45 73 40 68 Q28 60 32 46 Q38 28 50 28" fill="url(#rg2)"/>
+                    <!-- Centre spiral -->
+                    <path d="M50 42 C53 38 58 40 56 46 C54 52 47 52 46 47 C45 43 48 40 50 42" fill="#800e13" opacity="0.8"/>
+                    <!-- Highlight -->
+                    <circle cx="43" cy="38" r="4" fill="rgba(255,230,235,0.15)"/>
+                </svg>
+                <div class="stem" style="height:180px;">
+                    <div class="leaf leaf-l"></div>
+                    <div class="leaf leaf-r"></div>
+                </div>
+            </div>
+
+            <div class="card" id="card2">
+                <div class="eyebrow">always & truly</div>
+                <div class="headline">You make my life<br>worth living</div>
+                <div class="subtitle">and I mean every word</div>
             </div>
         </div>
-        <div class="text-container">
-            <h1>You make my life</h1>
-            <p>worth living.</p>
+    </section>
+
+    <!-- ─── Section 3: Declaration ─── -->
+    <section id="sec3">
+        <div class="bg-layer"></div>
+        <div class="content">
+            <div class="card" id="card3" style="max-width:640px; padding: 56px 72px;">
+                <div class="eyebrow">with all of me</div>
+                <div class="name-display">Sajda</div>
+                <div class="divider"></div>
+                <div class="arabic-line">我爱你</div>
+                <div class="divider"></div>
+                <div class="forever">forever &nbsp;·&nbsp; always &nbsp;·&nbsp; without condition</div>
+            </div>
         </div>
     </section>
 
     <script>
-        // High-Performance Particle Engine
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
+        // ─── Cursor ───
+        const dot  = document.getElementById('cursor-dot');
+        const ring = document.getElementById('cursor-ring');
+        let mx = 0, my = 0, rx = 0, ry = 0;
+
+        document.addEventListener('mousemove', e => {
+            mx = e.clientX;
+            my = e.clientY;
+            dot.style.transform = `translate(${mx - 3}px, ${my - 3}px)`;
+        });
+
+        (function trackRing() {
+            rx += (mx - rx) * 0.12;
+            ry += (my - ry) * 0.12;
+            ring.style.left = rx + 'px';
+            ring.style.top  = ry + 'px';
+            requestAnimationFrame(trackRing);
+        })();
+
+        // ─── Starfield Canvas ───
+        const canvas = document.getElementById('starfield');
+        const ctx    = canvas.getContext('2d');
 
         function resize() {
-            canvas.width = window.innerWidth;
+            canvas.width  = window.innerWidth;
             canvas.height = window.innerHeight;
         }
         window.addEventListener('resize', resize);
         resize();
 
-        class Particle {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2;
-                this.speedX = (Math.random() - 0.5) * 0.5;
-                this.speedY = Math.random() * 1 + 0.2;
-                this.color = Math.random() > 0.5 ? '#ff85a1' : '#caf0f8';
-            }
-            update() {
-                this.y += this.speedY;
-                this.x += this.speedX;
-                if (this.y > canvas.height) this.reset();
-            }
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
+        const STAR_COUNT = 120;
+        const stars = Array.from({ length: STAR_COUNT }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 1.2 + 0.2,
+            a: Math.random(),
+            speed: Math.random() * 0.003 + 0.001,
+            phase: Math.random() * Math.PI * 2,
+        }));
 
-        for (let i = 0; i < 100; i++) particles.push(new Particle());
-
-        function animate() {
+        function drawStars(t) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
+            stars.forEach(s => {
+                const alpha = 0.2 + 0.6 * (0.5 + 0.5 * Math.sin(t * s.speed + s.phase));
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(201,169,110,${alpha * 0.7})`;
+                ctx.fill();
             });
-            requestAnimationFrame(animate);
+            requestAnimationFrame(drawStars);
         }
-        animate();
+        drawStars(0);
 
-        // Cursor Sparkle Trail
-        window.addEventListener('mousemove', (e) => {
-            for(let i=0; i<2; i++) {
-                const p = new Particle();
-                p.x = e.clientX;
-                p.y = e.clientY;
-                p.speedY = (Math.random() - 0.5) * 2;
-                particles.push(p);
-                setTimeout(() => {
-                    particles.shift();
-                }, 1000);
-            }
-        });
+        // ─── Scroll-triggered card reveals ───
+        const cards = document.querySelectorAll('.card');
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) e.target.classList.add('visible');
+            });
+        }, { threshold: 0.3 });
+
+        cards.forEach(c => observer.observe(c));
+
+        // Also reveal card1 on load
+        setTimeout(() => document.getElementById('card1').classList.add('visible'), 400);
+
+        // ─── Petal Rain ───
+        const colors = ['#ffb3c1', '#ff85a1', '#ff4d6d', '#c9184a', '#f9c6d0'];
+
+        function spawnPetal() {
+            const p = document.createElement('div');
+            p.className = 'petal';
+            const size = Math.random() * 6 + 4;
+            p.style.cssText = `
+                left: ${Math.random() * 100}vw;
+                top: -20px;
+                width: ${size}px;
+                height: ${size * 1.4}px;
+                background: ${colors[Math.floor(Math.random() * colors.length)]};
+                border-radius: 50% 0 50% 0;
+                animation-duration: ${Math.random() * 8 + 6}s;
+                animation-delay: ${Math.random() * 3}s;
+                opacity: 0;
+                filter: blur(${Math.random() * 0.5}px);
+            `;
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 14000);
+        }
+
+        setInterval(spawnPetal, 600);
     </script>
 </body>
 </html>
