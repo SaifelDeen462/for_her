@@ -637,13 +637,12 @@
         requestAnimationFrame(animCursor);
     })();
 
-    // ═══════════════════════════════════════
-    //  TRAIL CANVAS (mouse + touch)
-    // ═══════════════════════════════════════
+    // TRAIL CANVAS (mouse + touch) — time-based decay so trail vanishes when finger lifts
     const trailCanvas = document.getElementById('trail-canvas');
     const tctx = trailCanvas.getContext('2d');
-    const trail = [];
-    const TRAIL_LEN = 30;
+    const trail = [];   // each point: { x, y, born }
+    const TRAIL_MAX_AGE = 600;  // ms before a point fully fades
+    const TRAIL_LEN = 40;
 
     function resizeTrail() {
         trailCanvas.width  = window.innerWidth;
@@ -653,7 +652,7 @@
     resizeTrail();
 
     function pushTrail(x, y) {
-        trail.push({ x, y });
+        trail.push({ x, y, born: Date.now() });
         if (trail.length > TRAIL_LEN) trail.shift();
     }
 
@@ -664,21 +663,33 @@
 
     (function drawTrail() {
         tctx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+        const now = Date.now();
+
+        // Remove fully expired points
+        while (trail.length && now - trail[0].born > TRAIL_MAX_AGE) trail.shift();
+
         for (let i = 1; i < trail.length; i++) {
-            const t    = i / trail.length;
             const p    = trail[i];
             const prev = trail[i - 1];
+            // age 0=fresh, 1=fully expired
+            const age  = (now - p.born) / TRAIL_MAX_AGE;
+            const life = 1 - age;             // 1=fresh, 0=gone
+            const pos  = i / trail.length;    // position in array
+            const alpha = life * pos * 0.35;
+            if (alpha <= 0.01) continue;
+
             tctx.beginPath();
             tctx.moveTo(prev.x, prev.y);
             tctx.lineTo(p.x, p.y);
-            tctx.strokeStyle = `rgba(201,169,110,${t * 0.28})`;
-            tctx.lineWidth   = t * 3;
+            tctx.strokeStyle = `rgba(201,169,110,${alpha})`;
+            tctx.lineWidth   = pos * 3 * life;
             tctx.lineCap     = 'round';
             tctx.stroke();
+
             if (i % 4 === 0) {
                 tctx.beginPath();
-                tctx.arc(p.x, p.y, t * 2.5, 0, Math.PI * 2);
-                tctx.fillStyle = `rgba(255,179,193,${t * 0.18})`;
+                tctx.arc(p.x, p.y, pos * 2.5 * life, 0, Math.PI * 2);
+                tctx.fillStyle = `rgba(255,179,193,${alpha * 0.6})`;
                 tctx.fill();
             }
         }
