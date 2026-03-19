@@ -4,7 +4,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For You</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --black: #000000;
+            --pink: #ff85a1;
+            --red: #c9184a;
+            --blue: #0077b6;
+            --baby-blue: #caf0f8;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, #001233 0%, #000 85%);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        /* Star Background */
+        #star-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+
+        /* Tulip Styling */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .flower {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: sway 5s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 133, 161, 0.6));
+        }
+
+        .tulip-svg {
+            width: 140px;
+            height: 140px;
+        }
+
+        .petal-back { fill: var(--red); opacity: 0.7; }
+        .petal-side { fill: var(--pink); stroke: var(--red); stroke-width: 0.5; }
+        .petal-front { fill: #ffb3c1; stroke: var(--red); stroke-width: 0.5; }
+
+        .stem {
+            width: 7px;
+            height: 180px;
+            background: linear-gradient(to bottom, #2d6a4f, #081c15);
+            margin-top: -10px;
+            position: relative;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 55px;
+            height: 25px;
+            background: #40916c;
+            border-radius: 0 100% 0 100%;
+            top: 40px;
+            left: -45px;
+            transform: rotate(-30deg);
+        }
+
+        .leaf-right {
+            left: 2px;
+            top: 80px;
+            transform: rotate(210deg);
+        }
+
+        /* Text Styling */
+        .text-box h1 {
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            margin-top: 30px;
+            text-shadow: 0 0 10px var(--baby-blue);
+            animation: fadeIn 3s forwards;
+        }
+
+        .text-box p {
+            color: var(--baby-blue);
+            font-style: italic;
+            margin-top: 10px;
+            animation: fadeIn 3s forwards 1s;
+        }
+
+        .highlight { color: var(--pink); font-weight: bold; }
+
+        /* Animations */
+        @keyframes sway {
+            0%, 100% { transform: rotate(-3deg) translateY(0); }
+            50% { transform: rotate(3deg) translateY(-15px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .petal-particle {
+            position: fixed;
+            pointer-events: none;
+            border-radius: 50% 0 50% 0;
+            z-index: 5;
+        }
+    </style>
 </head>
 <body>
     <div id="star-container"></div>
@@ -29,6 +162,60 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        const starContainer = document.getElementById('star-container');
+
+        // Create Stars
+        for(let i=0; i<100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const size = Math.random() * 2 + 1;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.left = `${Math.random() * 100}vw`;
+            star.style.top = `${Math.random() * 100}vh`;
+            star.style.animationDelay = `${Math.random() * 2}s`;
+            starContainer.appendChild(star);
+        }
+
+        // Falling Petals
+        function createPetal() {
+            const petal = document.createElement('div');
+            const colors = ['#ff85a1', '#c9184a', '#a2d2ff', '#caf0f8'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const size = Math.random() * 15 + 10;
+            
+            petal.className = 'petal-particle';
+            petal.style.width = `${size}px`;
+            petal.style.height = `${size}px`;
+            petal.style.backgroundColor = color;
+            petal.style.left = `${Math.random() * 100}vw`;
+            petal.style.top = '-5vh';
+            petal.style.boxShadow = `0 0 8px ${color}`;
+
+            document.body.appendChild(petal);
+
+            const duration = Math.random() * 3000 + 4000;
+            const anim = petal.animate([
+                { transform: 'translateY(0) rotate(0deg)', opacity: 0.8 },
+                { transform: `translateY(110vh) rotate(720deg) translateX(${(Math.random() - 0.5) * 200}px)`, opacity: 0 }
+            ], { duration: duration, easing: 'linear' });
+
+            anim.onfinish = () => petal.remove();
+        }
+
+        setInterval(createPetal, 400);
+
+        // Interaction
+        window.addEventListener('mousemove', (e) => {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'star';
+            sparkle.style.left = `${e.pageX}px`;
+            sparkle.style.top = `${e.pageY}px`;
+            sparkle.style.background = '#caf0f8';
+            document.body.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 800);
+        });
+    </script>
 </body>
 </html>
