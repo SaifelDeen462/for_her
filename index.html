@@ -13,117 +13,140 @@
             --baby-blue: #caf0f8;
         }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            background: radial-gradient(circle at center, #001233 0%, #000 85%);
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
         }
 
-        /* Star Background */
-        #star-container {
+        body {
+            background-color: var(--black);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        section {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            scroll-snap-align: start;
+            overflow: hidden;
+        }
+
+        /* Ambient Starry Background */
+        .stars {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 0;
+            pointer-events: none;
         }
 
         .star {
             position: absolute;
             background: white;
             border-radius: 50%;
-            opacity: 0.5;
+            opacity: 0.4;
             animation: twinkle 2s infinite ease-in-out;
         }
 
-        /* Tulip Styling */
-        .main-content {
+        /* Section 1: The Tulip */
+        #tulip-section { background: radial-gradient(circle at center, #001233 0%, #000 80%); }
+
+        /* Section 2: The Detailed Rose */
+        #rose-section { background: radial-gradient(circle at center, #1a0005 0%, #000 80%); }
+
+        .flower-wrapper {
             position: relative;
-            z-index: 10;
-            text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
+            animation: sway 6s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 133, 161, 0.4));
+            z-index: 2;
         }
 
-        .flower {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            animation: sway 5s ease-in-out infinite;
-            filter: drop-shadow(0 0 20px rgba(255, 133, 161, 0.6));
-        }
+        /* SVG Sizing */
+        .flower-svg { width: 180px; height: 180px; }
 
-        .tulip-svg {
-            width: 140px;
-            height: 140px;
-        }
-
-        .petal-back { fill: var(--red); opacity: 0.7; }
-        .petal-side { fill: var(--pink); stroke: var(--red); stroke-width: 0.5; }
-        .petal-front { fill: #ffb3c1; stroke: var(--red); stroke-width: 0.5; }
-
+        /* Stem Styling */
         .stem {
-            width: 7px;
-            height: 180px;
+            width: 6px;
+            height: 150px;
             background: linear-gradient(to bottom, #2d6a4f, #081c15);
             margin-top: -10px;
+            border-radius: 4px;
             position: relative;
         }
 
         .leaf {
             position: absolute;
-            width: 55px;
-            height: 25px;
+            width: 45px;
+            height: 20px;
             background: #40916c;
             border-radius: 0 100% 0 100%;
-            top: 40px;
-            left: -45px;
+            top: 30px;
+            left: -40px;
             transform: rotate(-30deg);
+            box-shadow: inset 5px 0 10px #1b4332;
         }
 
-        .leaf-right {
-            left: 2px;
-            top: 80px;
-            transform: rotate(210deg);
+        .leaf-right { left: 2px; top: 60px; transform: rotate(210deg); }
+
+        /* Text Effects */
+        .text-box {
+            text-align: center;
+            margin-top: 40px;
+            z-index: 10;
+            padding: 0 20px;
         }
 
-        /* Text Styling */
-        .text-box h1 {
+        h1 {
             font-size: 1.5rem;
-            letter-spacing: 3px;
-            margin-top: 30px;
+            letter-spacing: 2px;
             text-shadow: 0 0 10px var(--baby-blue);
-            animation: fadeIn 3s forwards;
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1.5s ease-out;
         }
 
-        .text-box p {
+        p {
             color: var(--baby-blue);
             font-style: italic;
-            margin-top: 10px;
-            animation: fadeIn 3s forwards 1s;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1.5s ease-out 0.5s;
         }
 
-        .highlight { color: var(--pink); font-weight: bold; }
+        /* Show text when section is visible */
+        .visible h1, .visible p {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            color: var(--baby-blue);
+            animation: bounce 2s infinite;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
 
         /* Animations */
         @keyframes sway {
-            0%, 100% { transform: rotate(-3deg) translateY(0); }
-            50% { transform: rotate(3deg) translateY(-15px); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg) translateY(-10px); }
         }
 
         @keyframes twinkle {
@@ -131,42 +154,67 @@
             50% { opacity: 1; transform: scale(1.2); }
         }
 
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
         .petal-particle {
             position: fixed;
             pointer-events: none;
+            z-index: 100;
             border-radius: 50% 0 50% 0;
-            z-index: 5;
         }
     </style>
 </head>
 <body>
-    <div id="star-container"></div>
-    
-    <div class="main-content">
-        <div class="flower">
-            <svg class="tulip-svg" viewBox="0 0 100 100">
-                <path class="petal-back" d="M50,90 C20,80 10,50 10,30 C10,10 30,5 50,30 C70,5 90,10 90,30 C90,50 80,80 50,90 Z" />
-                <path class="petal-side" d="M50,95 C30,90 5,75 5,50 C5,25 25,10 45,30 C45,30 35,60 50,95 Z" />
-                <path class="petal-side" d="M50,95 C70,90 95,75 95,50 C95,25 75,10 55,30 C55,30 65,60 50,95 Z" />
-                <path class="petal-front" d="M50,95 C40,85 30,65 30,45 C30,25 50,10 50,10 C50,10 70,25 70,45 C70,65 60,85 50,95 Z" />
-            </svg>
-            <div class="stem">
-                <div class="leaf"></div>
-                <div class="leaf leaf-right"></div>
-            </div>
-        </div>
 
+    <div class="stars" id="star-field"></div>
+
+    <section id="tulip-section">
+        <div class="flower-wrapper">
+            <svg class="flower-svg" viewBox="0 0 100 100">
+                <path fill="var(--red)" opacity="0.6" d="M50,90 C20,80 10,50 10,30 C10,10 30,5 50,30 C70,5 90,10 90,30 C90,50 80,80 50,90 Z" />
+                <path fill="var(--pink)" d="M50,95 C30,90 5,75 5,50 C5,25 25,10 45,30 C45,30 35,60 50,95 Z" />
+                <path fill="var(--pink)" d="M50,95 C70,90 95,75 95,50 C95,25 75,10 55,30 C55,30 65,60 50,95 Z" />
+                <path fill="#ffb3c1" d="M50,95 C40,85 30,65 30,45 C30,25 50,10 50,10 C50,10 70,25 70,45 C70,65 60,85 50,95 Z" />
+            </svg>
+            <div class="stem"><div class="leaf"></div><div class="leaf leaf-right"></div></div>
+        </div>
         <div class="text-box">
             <h1>For the person who deserves the world.</h1>
-            <p>Until I can give it to you <span class="highlight">in real...</span></p>
+            <p>Until I can give it to you <b style="color:var(--pink)">in real...</b></p>
         </div>
-    </div>
+        <div class="scroll-indicator">Scroll Down ↓</div>
+    </section>
+
+    <section id="rose-section">
+        <div class="flower-wrapper">
+            <svg class="flower-svg" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" fill="url(#roseGradient)" />
+                <defs>
+                    <radialGradient id="roseGradient">
+                        <stop offset="0%" stop-color="#ff4d6d" />
+                        <stop offset="100%" stop-color="#800e13" />
+                    </radialGradient>
+                </defs>
+                <path fill="#c9184a" d="M50,50 Q70,10 90,50 T50,90 Q10,90 10,50 T50,10 Z" opacity="0.8" />
+                <path fill="#ff758f" d="M50,50 Q60,20 80,40 T50,70 Q20,70 20,40 T50,20 Z" opacity="0.9" />
+                <path fill="#ffb3c1" d="M50,50 Q55,35 65,45 T50,60 Q35,60 35,45 T50,35 Z" />
+            </svg>
+            <div class="stem" style="height: 180px;"><div class="leaf"></div><div class="leaf leaf-right"></div></div>
+        </div>
+        <div class="text-box">
+            <h1>You make my life worth living.</h1>
+            <p>Every single day.</p>
+        </div>
+    </section>
 
     <script>
-        const starContainer = document.getElementById('star-container');
-
-        // Create Stars
-        for(let i=0; i<100; i++) {
+        // Star Generation
+        const starField = document.getElementById('star-field');
+        for(let i=0; i<150; i++) {
             const star = document.createElement('div');
             star.className = 'star';
             const size = Math.random() * 2 + 1;
@@ -174,28 +222,38 @@
             star.style.height = `${size}px`;
             star.style.left = `${Math.random() * 100}vw`;
             star.style.top = `${Math.random() * 100}vh`;
-            star.style.animationDelay = `${Math.random() * 2}s`;
-            starContainer.appendChild(star);
+            star.style.animationDelay = `${Math.random() * 3}s`;
+            starField.appendChild(star);
         }
+
+        // Intersection Observer for Animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('section').forEach(section => observer.observe(section));
 
         // Falling Petals
         function createPetal() {
             const petal = document.createElement('div');
             const colors = ['#ff85a1', '#c9184a', '#a2d2ff', '#caf0f8'];
             const color = colors[Math.floor(Math.random() * colors.length)];
-            const size = Math.random() * 15 + 10;
             
             petal.className = 'petal-particle';
-            petal.style.width = `${size}px`;
-            petal.style.height = `${size}px`;
+            petal.style.width = `${Math.random() * 15 + 10}px`;
+            petal.style.height = petal.style.width;
             petal.style.backgroundColor = color;
             petal.style.left = `${Math.random() * 100}vw`;
             petal.style.top = '-5vh';
-            petal.style.boxShadow = `0 0 8px ${color}`;
+            petal.style.boxShadow = `0 0 10px ${color}`;
 
             document.body.appendChild(petal);
 
-            const duration = Math.random() * 3000 + 4000;
+            const duration = Math.random() * 3000 + 5000;
             const anim = petal.animate([
                 { transform: 'translateY(0) rotate(0deg)', opacity: 0.8 },
                 { transform: `translateY(110vh) rotate(720deg) translateX(${(Math.random() - 0.5) * 200}px)`, opacity: 0 }
@@ -206,13 +264,14 @@
 
         setInterval(createPetal, 400);
 
-        // Interaction
+        // Interaction Sparkles
         window.addEventListener('mousemove', (e) => {
             const sparkle = document.createElement('div');
             sparkle.className = 'star';
             sparkle.style.left = `${e.pageX}px`;
             sparkle.style.top = `${e.pageY}px`;
             sparkle.style.background = '#caf0f8';
+            sparkle.style.boxShadow = '0 0 10px white';
             document.body.appendChild(sparkle);
             setTimeout(() => sparkle.remove(), 800);
         });
