@@ -13,174 +13,278 @@
             --blush: #ffb3c1;
             --ivory: #f5f0eb;
             --gold: #c9a96e;
-            --midnight: #0d0015;
         }
 
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
         html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+        body { background: var(--bg); color: var(--ivory); font-family: 'Cormorant Garamond', serif; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
-        body {
-            background: var(--bg);
-            color: var(--ivory);
-            font-family: 'Cormorant Garamond', serif;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* --- Custom Cursor (desktop only) --- */
-        #cursor-dot, #cursor-ring {
-            display: none;
-            position: fixed;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 99999;
-        }
-
-        #cursor-dot { width: 6px; height: 6px; background: var(--gold); }
-        #cursor-ring { width: 28px; height: 28px; border: 1px solid rgba(201,169,110,0.5); }
+        /* ─── Cursor ─── */
+        #cursor-dot, #cursor-ring { display: none; position: fixed; border-radius: 50%; pointer-events: none; }
+        #cursor-dot  { width: 6px; height: 6px; background: var(--gold); z-index: 99999; }
+        #cursor-ring { width: 28px; height: 28px; border: 1px solid rgba(201,169,110,0.5); z-index: 99998; }
         body.has-mouse { cursor: none; }
 
-        /* --- Canvases --- */
-        #trail-canvas, #starfield {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-        }
+        /* ─── Canvases ─── */
+        #trail-canvas, #starfield { position: fixed; inset: 0; pointer-events: none; }
         #trail-canvas { z-index: 99990; }
         #starfield    { z-index: 0; }
 
         /* ══ LOCK SCREEN ══ */
         #lock-screen {
-            position: fixed;
-            inset: 0;
-            z-index: 9000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: var(--bg);
+            position: fixed; inset: 0; z-index: 9000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: var(--bg); overflow: hidden;
             transition: opacity 1.3s ease, transform 1.3s cubic-bezier(0.77,0,0.18,1);
-            overflow: hidden;
         }
-
         #lock-screen.unlocking { opacity: 0; transform: scale(1.07); pointer-events: none; }
 
         .lock-bg {
             position: absolute; inset: 0;
-            background:
-                radial-gradient(ellipse 70% 60% at 50% 50%, #1a0028 0%, transparent 65%),
-                radial-gradient(ellipse 40% 40% at 80% 20%, rgba(201,24,74,0.04) 0%, transparent 60%);
+            background: radial-gradient(ellipse 70% 60% at 50% 50%, #1a0028 0%, transparent 65%),
+                        radial-gradient(ellipse 40% 40% at 80% 20%, rgba(201,24,74,0.04) 0%, transparent 60%);
         }
-
-        .lock-ring {
-            position: absolute;
-            border-radius: 50%;
-            border: 1px solid rgba(201,169,110,0.07);
-            animation: spinSlow 22s linear infinite;
-        }
-        .lock-ring:nth-child(2) { width: min(340px, 80vw); height: min(340px, 80vw); }
-        .lock-ring:nth-child(3) { width: min(480px, 110vw); height: min(480px, 110vw); animation-duration: 35s; animation-direction: reverse; border-color: rgba(201,169,110,0.04); }
-
+        .lock-ring { position: absolute; border-radius: 50%; border: 1px solid rgba(201,169,110,0.07); animation: spinSlow 22s linear infinite; }
+        .lock-ring:nth-child(2) { width: min(340px,80vw); height: min(340px,80vw); }
+        .lock-ring:nth-child(3) { width: min(480px,110vw); height: min(480px,110vw); animation-duration: 35s; animation-direction: reverse; border-color: rgba(201,169,110,0.04); }
         @keyframes spinSlow { to { transform: rotate(360deg); } }
 
-        .lock-inner {
+        .lock-inner { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 22px; width: 100%; padding: 0 24px; }
+        .lock-icon { animation: breathe 4s ease-in-out infinite; }
+        .lock-icon svg { width: 34px; height: 34px; }
+        @keyframes breathe { 0%,100% { opacity:.3; transform:scale(1); } 50% { opacity:.65; transform:scale(1.06); } }
+
+        .lock-hint { text-align: center; }
+        .lock-eyebrow { font-family:'Raleway',sans-serif; font-weight:100; font-size:.55rem; letter-spacing:8px; text-transform:uppercase; color:var(--gold); opacity:.45; margin-bottom:14px; }
+        .lock-chinese { font-size:clamp(1.8rem,8vw,2.6rem); font-weight:300; color:var(--ivory); opacity:.75; letter-spacing:6px; }
+        .lock-subhint { font-family:'Raleway',sans-serif; font-weight:100; font-size:.5rem; letter-spacing:4px; text-transform:uppercase; color:var(--blush); opacity:.3; margin-top:10px; }
+
+        .pin-dots { display:flex; gap:20px; }
+        .pin-dot { width:14px; height:14px; border-radius:50%; border:1px solid rgba(201,169,110,.35); background:transparent; transition:all .2s; }
+        .pin-dot.filled { background:var(--gold); border-color:var(--gold); transform:scale(1.2); box-shadow:0 0 10px rgba(201,169,110,.4); }
+        .pin-dot.error  { background:var(--rose); border-color:var(--rose); animation:shake .45s ease; }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-7px)} 40%,80%{transform:translateX(7px)} }
+
+        .lock-error { font-family:'Raleway',sans-serif; font-size:.5rem; letter-spacing:6px; text-transform:uppercase; color:var(--rose); opacity:0; transition:opacity .4s; height:14px; }
+        .lock-error.show { opacity:.65; }
+
+        .numpad { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; width:min(280px,85vw); margin-top:4px; }
+        .num-btn { aspect-ratio:1; border:1px solid rgba(201,169,110,.18); border-radius:50%; background:rgba(255,255,255,.03); color:var(--ivory); font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:300; cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:center; -webkit-tap-highlight-color:transparent; }
+        .num-btn:active { background:rgba(201,169,110,.15); border-color:rgba(201,169,110,.5); transform:scale(.92); }
+        .num-btn.empty { background:transparent; border-color:transparent; pointer-events:none; }
+        .num-btn.del-btn { font-size:1rem; opacity:.6; }
+
+        #unlock-flash { position:fixed; inset:0; z-index:8999; background:radial-gradient(ellipse at 50% 50%,rgba(201,169,110,.3) 0%,transparent 70%); opacity:0; pointer-events:none; transition:opacity .5s; }
+        #unlock-flash.flash { opacity:1; }
+
+        /* ══ MAIN SITE ══ */
+        #main-site { opacity:0; pointer-events:none; transition:opacity 1.5s ease .7s; }
+        #main-site.revealed { opacity:1; pointer-events:all; }
+
+        section { height:100vh; width:100vw; display:flex; flex-direction:column; justify-content:center; align-items:center; scroll-snap-align:start; position:relative; overflow:hidden; }
+        .bg-layer { position:absolute; inset:0; z-index:1; pointer-events:none; }
+        #sec1 .bg-layer { background:radial-gradient(ellipse 60% 60% at 50% 40%,#1a0028 0%,transparent 70%); }
+        #sec2 .bg-layer { background:radial-gradient(ellipse 50% 50% at 50% 50%,#1c0010 0%,transparent 70%); }
+        #sec3 .bg-layer { background:radial-gradient(ellipse 70% 50% at 50% 50%,#0a0020 0%,transparent 70%); }
+
+        .content { position:relative; z-index:10; display:flex; flex-direction:column; align-items:center; gap:clamp(20px,4vw,40px); padding:0 20px; }
+
+        .flower-wrap { animation:float 7s ease-in-out infinite; filter:drop-shadow(0 30px 60px rgba(201,24,74,.25)); transform-origin:bottom center; }
+        @keyframes float { 0%,100%{transform:translateY(0) rotate(-1deg)} 50%{transform:translateY(-18px) rotate(1deg)} }
+        .flower-svg { width:clamp(140px,40vw,220px); height:auto; }
+        .stem { width:4px; height:clamp(100px,22vw,160px); background:linear-gradient(to bottom,#2d6a4f,#0c1f0e); border-radius:10px; margin:0 auto; position:relative; }
+        .leaf { position:absolute; width:52px; height:24px; background:linear-gradient(135deg,#2d6a4f,#1b4332); border-radius:0 80% 0 80%; box-shadow:inset -4px -4px 8px rgba(0,0,0,.4); }
+        .leaf-l { top:30px; left:-46px; transform:rotate(-25deg); }
+        .leaf-r { top:65px; left:4px;   transform:rotate(205deg); }
+
+        .card { text-align:center; padding:clamp(22px,5vw,36px) clamp(24px,6vw,48px); background:rgba(255,255,255,.025); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-radius:2px; border:1px solid rgba(201,169,110,.15); max-width:min(520px,92vw); position:relative; opacity:0; transform:translateY(30px); transition:opacity .9s ease, transform .9s ease; }
+        .card::before,.card::after { content:''; position:absolute; width:14px; height:14px; border-color:var(--gold); border-style:solid; opacity:.5; }
+        .card::before { top:-1px; left:-1px; border-width:1px 0 0 1px; }
+        .card::after  { bottom:-1px; right:-1px; border-width:0 1px 1px 0; }
+        .card.visible { opacity:1; transform:translateY(0); }
+
+        .eyebrow { font-family:'Raleway',sans-serif; font-weight:100; font-size:.6rem; letter-spacing:8px; text-transform:uppercase; color:var(--gold); opacity:.7; margin-bottom:14px; }
+        .headline { font-weight:300; font-size:clamp(1.4rem,5vw,2rem); line-height:1.3; color:var(--ivory); }
+        .subtitle  { font-style:italic; font-size:clamp(.85rem,3vw,1.05rem); color:var(--blush); letter-spacing:2px; margin-top:12px; opacity:.85; }
+
+        .name-display { font-size:clamp(2.8rem,12vw,5rem); font-weight:300; letter-spacing:12px; text-transform:uppercase; line-height:1; }
+        .arabic-line  { font-size:clamp(1.3rem,5vw,1.8rem); color:var(--gold); letter-spacing:3px; font-style:italic; opacity:.9; }
+        .divider { width:80px; height:1px; background:linear-gradient(to right,transparent,var(--gold),transparent); margin:18px auto; }
+        .forever { font-family:'Raleway',sans-serif; font-size:.65rem; letter-spacing:10px; text-transform:uppercase; color:var(--blush); opacity:.6; }
+
+        /* ─── Sable Button ─── */
+        .sable-btn-wrap {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity 1s ease 1.4s, transform 1s ease 1.4s;
+        }
+        .sable-btn-wrap.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .btn-sable {
             position: relative;
-            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: transparent;
+            border: 1px solid rgba(201,169,110,0.3);
+            color: var(--gold);
+            font-family: 'Raleway', sans-serif;
+            font-weight: 100;
+            font-size: 0.6rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            padding: 16px 32px;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.35s ease;
+            -webkit-tap-highlight-color: transparent;
+            overflow: hidden;
+        }
+
+        .btn-sable::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 50%, rgba(201,169,110,0.08), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.35s;
+        }
+
+        .btn-sable:hover::before,
+        .btn-sable:active::before { opacity: 1; }
+
+        .btn-sable:hover {
+            border-color: rgba(201,169,110,0.6);
+            box-shadow: 0 0 24px rgba(201,169,110,0.12), 0 0 60px rgba(201,169,110,0.04);
+            letter-spacing: 7px;
+        }
+
+        .btn-sable:active { transform: scale(0.97); }
+
+        /* Paw icon inside button */
+        .btn-sable svg {
+            width: 14px;
+            height: 14px;
+            opacity: 0.7;
+            flex-shrink: 0;
+        }
+
+        /* ─── Sable Modal ─── */
+        #sable-modal {
+            position: fixed; inset: 0; z-index: 200000;
+            background: rgba(6,3,10,0.96);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        #sable-modal.open { display: flex; }
+        #sable-modal.visible { opacity: 1; }
+
+        .modal-inner {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 22px;
+            gap: 28px;
+            max-width: min(560px, 94vw);
             width: 100%;
-            padding: 0 24px;
+            padding: 0 20px;
         }
 
-        .lock-icon { animation: breathe 4s ease-in-out infinite; }
-        .lock-icon svg { width: 34px; height: 34px; }
-
-        @keyframes breathe {
-            0%,100% { opacity: 0.3; transform: scale(1); }
-            50%      { opacity: 0.65; transform: scale(1.06); }
+        .modal-label {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 100;
+            font-size: 0.52rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.5;
         }
 
-        .lock-hint { text-align: center; }
-        .lock-eyebrow { font-family: 'Raleway', sans-serif; font-weight: 100; font-size: 0.55rem; letter-spacing: 8px; text-transform: uppercase; color: var(--gold); opacity: 0.45; margin-bottom: 14px; }
-        .lock-chinese { font-size: clamp(1.8rem, 8vw, 2.6rem); font-weight: 300; color: var(--ivory); opacity: 0.75; letter-spacing: 6px; }
-        .lock-subhint { font-family: 'Raleway', sans-serif; font-weight: 100; font-size: 0.5rem; letter-spacing: 4px; text-transform: uppercase; color: var(--blush); opacity: 0.3; margin-top: 10px; }
-
-        .pin-dots { display: flex; gap: 20px; }
-        .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(201,169,110,0.35); background: transparent; transition: all 0.2s; }
-        .pin-dot.filled { background: var(--gold); border-color: var(--gold); transform: scale(1.2); box-shadow: 0 0 10px rgba(201,169,110,0.4); }
-        .pin-dot.error { background: var(--rose); border-color: var(--rose); animation: shake 0.45s ease; }
-
-        @keyframes shake {
-            0%,100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-7px); }
-            40%, 80% { transform: translateX(7px); }
+        .sable-frame {
+            position: relative;
+            width: 100%;
         }
 
-        .lock-error { font-family: 'Raleway', sans-serif; font-size: 0.5rem; letter-spacing: 6px; text-transform: uppercase; color: var(--rose); opacity: 0; transition: opacity 0.4s; height: 14px; }
-        .lock-error.show { opacity: 0.65; }
+        /* Corner accents on photo */
+        .sable-frame::before,
+        .sable-frame::after {
+            content: '';
+            position: absolute;
+            width: 20px; height: 20px;
+            border-color: var(--gold);
+            border-style: solid;
+            opacity: 0.4;
+            z-index: 1;
+        }
+        .sable-frame::before { top: -4px; left: -4px; border-width: 1px 0 0 1px; }
+        .sable-frame::after  { bottom: -4px; right: -4px; border-width: 0 1px 1px 0; }
 
-        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: min(280px, 85vw); margin-top: 4px; }
-        .num-btn { aspect-ratio: 1; border: 1px solid rgba(201,169,110,0.18); border-radius: 50%; background: rgba(255,255,255,0.03); color: var(--ivory); font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 300; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent; }
-        .num-btn:active { background: rgba(201,169,110,0.15); border-color: rgba(201,169,110,0.5); transform: scale(0.92); }
-        .num-btn.empty { background: transparent; border-color: transparent; pointer-events: none; }
-        .num-btn.del-btn { font-size: 1rem; opacity: 0.6; }
+        .sable-img {
+            display: block;
+            width: 100%;
+            max-height: 65vh;
+            object-fit: cover;
+            border: 1px solid rgba(201,169,110,0.15);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,169,110,0.05);
+        }
 
-        #unlock-flash { position: fixed; inset: 0; z-index: 8999; background: radial-gradient(ellipse at 50% 50%, rgba(201,169,110,0.3) 0%, transparent 70%); opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
-        #unlock-flash.flash { opacity: 1; }
+        .modal-caption {
+            text-align: center;
+        }
 
-        /* ══ MAIN SITE ══ */
-        #main-site { opacity: 0; pointer-events: none; transition: opacity 1.5s ease 0.7s; }
-        #main-site.revealed { opacity: 1; pointer-events: all; }
+        .modal-caption .name {
+            font-size: clamp(1.6rem,6vw,2.4rem);
+            font-weight: 300;
+            letter-spacing: 6px;
+            color: var(--ivory);
+            opacity: 0.9;
+        }
 
-        section { height: 100vh; width: 100vw; display: flex; flex-direction: column; justify-content: center; align-items: center; scroll-snap-align: start; position: relative; overflow: hidden; }
+        .modal-caption .tagline {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 100;
+            font-size: 0.52rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--blush);
+            opacity: 0.45;
+            margin-top: 8px;
+        }
 
-        .content { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: clamp(20px, 4vw, 40px); padding: 0 20px; }
+        .close-sable {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 100;
+            font-size: 0.52rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--ivory);
+            opacity: 0.3;
+            cursor: pointer;
+            padding: 14px 24px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 2px;
+            transition: opacity 0.3s, border-color 0.3s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .close-sable:hover { opacity: 0.6; border-color: rgba(255,255,255,0.2); }
 
-        .flower-wrap { animation: float 7s ease-in-out infinite; filter: drop-shadow(0 30px 60px rgba(201,24,74,0.25)); transform-origin: bottom center; }
-        @keyframes float { 0%,100% { transform: translateY(0px) rotate(-1deg); } 50% { transform: translateY(-18px) rotate(1deg); } }
-        .flower-svg { width: clamp(140px, 40vw, 220px); height: auto; }
+        /* ─── Scroll hint ─── */
+        .scroll-hint { position:absolute; bottom:28px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:10px; z-index:10; }
+        .scroll-hint span { font-family:'Raleway',sans-serif; font-size:.5rem; letter-spacing:6px; text-transform:uppercase; color:rgba(201,169,110,.4); animation:fadeUD 2.5s ease-in-out infinite; }
+        .scroll-line { width:1px; height:36px; background:linear-gradient(to bottom,rgba(201,169,110,.4),transparent); animation:fadeUD 2.5s ease-in-out infinite reverse; }
+        @keyframes fadeUD { 0%,100%{opacity:.3;transform:translateY(0)} 50%{opacity:.7;transform:translateY(4px)} }
 
-        .stem { width: 4px; height: clamp(100px, 22vw, 160px); background: linear-gradient(to bottom, #2d6a4f, #0c1f0e); border-radius: 10px; margin: 0 auto; position: relative; }
-        .leaf { position: absolute; width: 52px; height: 24px; background: linear-gradient(135deg, #2d6a4f, #1b4332); border-radius: 0 80% 0 80%; box-shadow: inset -4px -4px 8px rgba(0,0,0,0.4); }
-        .leaf-l { top: 30px; left: -46px; transform: rotate(-25deg); }
-        .leaf-r { top: 65px; left: 4px; transform: rotate(205deg); }
-
-        .card { text-align: center; padding: clamp(22px, 5vw, 36px); background: rgba(255,255,255,0.025); backdrop-filter: blur(20px); border-radius: 2px; border: 1px solid rgba(201,169,110,0.15); max-width: min(520px, 92vw); opacity: 0; transform: translateY(30px); transition: all 0.9s ease; }
-        .card.visible { opacity: 1; transform: translateY(0); }
-
-        .eyebrow { font-family: 'Raleway', sans-serif; font-size: 0.6rem; letter-spacing: 8px; text-transform: uppercase; color: var(--gold); opacity: 0.7; margin-bottom: 14px; }
-        .headline { font-weight: 300; font-size: clamp(1.4rem, 5vw, 2rem); line-height: 1.3; color: var(--ivory); }
-        .subtitle { font-style: italic; font-size: clamp(0.85rem, 3vw, 1.05rem); color: var(--blush); letter-spacing: 2px; margin-top: 12px; opacity: 0.85; }
-
-        /* --- Sable Button Styles --- */
-        .sable-trigger-wrap { margin-top: 10px; opacity: 0; transform: translateY(10px); transition: all 0.8s ease 1.2s; }
-        .card.visible + .sable-trigger-wrap { opacity: 1; transform: translateY(0); }
-
-        .btn-sable { background: transparent; border: 1px solid var(--gold); color: var(--gold); font-family: 'Raleway', sans-serif; font-size: 0.65rem; letter-spacing: 4px; text-transform: uppercase; padding: 14px 28px; cursor: pointer; transition: all 0.3s; border-radius: 2px; }
-        .btn-sable:hover { background: rgba(201,169,110,0.1); box-shadow: 0 0 15px rgba(201,169,110,0.2); }
-
-        /* --- Sable Modal --- */
-        #sable-modal { position: fixed; inset: 0; background: rgba(6, 3, 10, 0.97); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 200000; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
-        .sable-img { max-width: 90vw; max-height: 70vh; border: 1px solid rgba(201, 169, 110, 0.3); box-shadow: 0 30px 60px rgba(0,0,0,0.6); object-fit: contain; }
-        .close-sable { margin-top: 40px; color: var(--ivory); font-family: 'Raleway', sans-serif; font-size: 0.6rem; letter-spacing: 6px; text-transform: uppercase; opacity: 0.5; cursor: pointer; padding: 10px; }
-
-        /* Sections 2 & 3 Styles */
-        #sec1 .bg-layer { background: radial-gradient(ellipse 60% 60% at 50% 40%, #1a0028 0%, transparent 70%); }
-        .name-display { font-size: clamp(2.8rem, 12vw, 5rem); font-weight: 300; letter-spacing: 12px; text-transform: uppercase; line-height: 1; }
-        .arabic-line { font-size: clamp(1.3rem, 5vw, 1.8rem); color: var(--gold); letter-spacing: 3px; font-style: italic; opacity: 0.9; }
-        .divider { width: 80px; height: 1px; background: linear-gradient(to right, transparent, var(--gold), transparent); margin: 18px auto; }
-        .forever { font-family: 'Raleway', sans-serif; font-size: 0.65rem; letter-spacing: 10px; text-transform: uppercase; color: var(--blush); opacity: 0.6; }
-
-        .scroll-hint { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 10; }
-        .scroll-hint span { font-family: 'Raleway', sans-serif; font-size: 0.5rem; letter-spacing: 6px; text-transform: uppercase; color: rgba(201,169,110,0.4); animation: fadeUD 2.5s ease-in-out infinite; }
-        .scroll-line { width: 1px; height: 36px; background: linear-gradient(to bottom, rgba(201,169,110,0.4), transparent); animation: fadeUD 2.5s ease-in-out infinite reverse; }
-        @keyframes fadeUD { 0%,100% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 0.7; transform: translateY(4px); } }
-
-        .petal { position: fixed; pointer-events: none; z-index: 1; opacity: 0; animation: petalFall linear infinite; }
-        @keyframes petalFall { 0% { opacity: 0; transform: translateY(-20px) rotate(0deg); } 10% { opacity: 0.6; } 100% { opacity: 0; transform: translateY(110vh) rotate(720deg); } }
+        .petal { position:fixed; pointer-events:none; z-index:1; opacity:0; animation:petalFall linear infinite; }
+        @keyframes petalFall { 0%{opacity:0;transform:translateY(-20px) rotate(0deg)} 10%{opacity:.6} 100%{opacity:0;transform:translateY(110vh) rotate(720deg)} }
     </style>
 </head>
 <body>
@@ -191,14 +295,16 @@
     <canvas id="starfield"></canvas>
     <div id="unlock-flash"></div>
 
+    <!-- ══ LOCK SCREEN ══ -->
     <div id="lock-screen">
         <div class="lock-bg"></div>
         <div class="lock-ring"></div>
         <div class="lock-ring"></div>
         <div class="lock-inner">
             <div class="lock-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1.2">
-                    <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                 </svg>
             </div>
             <div class="lock-hint">
@@ -207,47 +313,112 @@
                 <div class="lock-subhint">hint · my birthday</div>
             </div>
             <div class="pin-dots">
-                <div class="pin-dot" id="d0"></div><div class="pin-dot" id="d1"></div><div class="pin-dot" id="d2"></div><div class="pin-dot" id="d3"></div>
+                <div class="pin-dot" id="d0"></div>
+                <div class="pin-dot" id="d1"></div>
+                <div class="pin-dot" id="d2"></div>
+                <div class="pin-dot" id="d3"></div>
             </div>
             <div class="lock-error" id="lock-error">incorrect</div>
-            <div class="numpad" id="numpad">
-                <button class="num-btn" data-n="1">1</button><button class="num-btn" data-n="2">2</button><button class="num-btn" data-n="3">3</button>
-                <button class="num-btn" data-n="4">4</button><button class="num-btn" data-n="5">5</button><button class="num-btn" data-n="6">6</button>
-                <button class="num-btn" data-n="7">7</button><button class="num-btn" data-n="8">8</button><button class="num-btn" data-n="9">9</button>
-                <button class="num-btn empty"></button><button class="num-btn" data-n="0">0</button><button class="num-btn del-btn" id="del-btn">⌫</button>
+            <div class="numpad">
+                <button class="num-btn" data-n="1">1</button>
+                <button class="num-btn" data-n="2">2</button>
+                <button class="num-btn" data-n="3">3</button>
+                <button class="num-btn" data-n="4">4</button>
+                <button class="num-btn" data-n="5">5</button>
+                <button class="num-btn" data-n="6">6</button>
+                <button class="num-btn" data-n="7">7</button>
+                <button class="num-btn" data-n="8">8</button>
+                <button class="num-btn" data-n="9">9</button>
+                <button class="num-btn empty"></button>
+                <button class="num-btn" data-n="0">0</button>
+                <button class="num-btn del-btn" id="del-btn">⌫</button>
             </div>
         </div>
     </div>
 
+    <!-- ══ MAIN SITE ══ -->
     <div id="main-site">
+
         <section id="sec1">
+            <div class="bg-layer"></div>
             <div class="content">
                 <div class="flower-wrap">
                     <svg class="flower-svg" viewBox="0 0 100 120">
                         <defs>
-                            <linearGradient id="tg1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ffb3c1"/><stop offset="100%" stop-color="#c9184a"/></linearGradient>
-                            <linearGradient id="tg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ff4d6d"/><stop offset="100%" stop-color="#800e13"/></linearGradient>
+                            <linearGradient id="tg1" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#ffb3c1"/>
+                                <stop offset="100%" stop-color="#c9184a"/>
+                            </linearGradient>
+                            <linearGradient id="tg2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ff4d6d"/>
+                                <stop offset="100%" stop-color="#800e13"/>
+                            </linearGradient>
                         </defs>
-                        <path d="M50 95 Q18 88 8 52 Q8 18 38 28 Q28 62 50 95" fill="url(#tg1)" opacity="0.9"/>
+                        <path d="M50 95 Q18 88 8 52 Q8 18 38 28 Q28 62 50 95"  fill="url(#tg1)" opacity="0.9"/>
                         <path d="M50 95 Q82 88 92 52 Q92 18 62 28 Q72 62 50 95" fill="url(#tg1)" opacity="0.9"/>
                         <path d="M50 98 Q33 88 28 52 Q28 8 50 3 Q72 8 72 52 Q67 88 50 98" fill="url(#tg2)"/>
+                        <path d="M50 40 Q46 28 48 8" stroke="rgba(255,230,235,0.3)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
                     </svg>
-                    <div class="stem"><div class="leaf leaf-l"></div><div class="leaf leaf-r"></div></div>
+                    <div class="stem">
+                        <div class="leaf leaf-l"></div>
+                        <div class="leaf leaf-r"></div>
+                    </div>
                 </div>
+
                 <div class="card" id="card1">
                     <div class="eyebrow">A gift for you</div>
                     <div class="headline">Until I can give it<br>to you in real</div>
                     <div class="subtitle">with every intention</div>
                 </div>
-                <div class="sable-trigger-wrap">
-                    <button class="btn-sable" id="open-sable">Show Sable</button>
+
+                <!-- Sable Button -->
+                <div class="sable-btn-wrap" id="sable-btn-wrap">
+                    <button class="btn-sable" id="open-sable">
+                        <!-- paw print icon -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="7"  cy="8"  r="1.5"/>
+                            <circle cx="12" cy="6"  r="1.5"/>
+                            <circle cx="17" cy="8"  r="1.5"/>
+                            <circle cx="4.5" cy="12.5" r="1.2"/>
+                            <path d="M12 22c-3.5 0-7-2-7-5.5 0-2 1.5-3.5 3-4.5 1-.7 2.5-1 4-1s3 .3 4 1c1.5 1 3 2.5 3 4.5 0 3.5-3.5 5.5-7 5.5z"/>
+                        </svg>
+                        Meet Sable
+                    </button>
                 </div>
             </div>
-            <div class="scroll-hint"><span>scroll</span><div class="scroll-line"></div></div>
+            <div class="scroll-hint">
+                <span>scroll</span>
+                <div class="scroll-line"></div>
+            </div>
         </section>
 
         <section id="sec2">
+            <div class="bg-layer"></div>
             <div class="content">
+                <div class="flower-wrap" style="animation-delay:-3s;">
+                    <svg class="flower-svg" viewBox="0 0 100 120">
+                        <defs>
+                            <radialGradient id="rg1" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%"   stop-color="#ff4d6d"/>
+                                <stop offset="60%"  stop-color="#c9184a"/>
+                                <stop offset="100%" stop-color="#800e13"/>
+                            </radialGradient>
+                            <radialGradient id="rg2" cx="40%" cy="40%" r="60%">
+                                <stop offset="0%"   stop-color="#ffb3c1"/>
+                                <stop offset="100%" stop-color="#ff4d6d"/>
+                            </radialGradient>
+                        </defs>
+                        <ellipse cx="50" cy="50" rx="40" ry="42" fill="url(#rg1)" opacity="0.5"/>
+                        <path d="M50 8 Q75 8 87 35 Q95 60 75 80 Q62 92 50 92 Q38 92 25 80 Q5 60 13 35 Q25 8 50 8" fill="#c9184a" opacity="0.7"/>
+                        <path d="M50 18 Q68 18 78 40 Q84 60 66 74 Q58 82 50 82 Q42 82 34 74 Q16 60 22 40 Q32 18 50 18" fill="#ff4d6d" opacity="0.85"/>
+                        <path d="M50 28 Q62 28 68 46 Q72 60 60 68 Q55 73 50 73 Q45 73 40 68 Q28 60 32 46 Q38 28 50 28" fill="url(#rg2)"/>
+                        <path d="M50 42 C53 38 58 40 56 46 C54 52 47 52 46 47 C45 43 48 40 50 42" fill="#800e13" opacity="0.8"/>
+                    </svg>
+                    <div class="stem" style="height:clamp(100px,22vw,180px);">
+                        <div class="leaf leaf-l"></div>
+                        <div class="leaf leaf-r"></div>
+                    </div>
+                </div>
                 <div class="card" id="card2">
                     <div class="eyebrow">always &amp; truly</div>
                     <div class="headline">You make my life<br>worth living</div>
@@ -257,134 +428,244 @@
         </section>
 
         <section id="sec3">
+            <div class="bg-layer"></div>
             <div class="content">
-                <div class="card" id="card3">
+                <div class="card" id="card3" style="max-width:min(640px,92vw); padding:clamp(30px,6vw,56px) clamp(24px,8vw,72px);">
                     <div class="eyebrow">with all of me</div>
                     <div class="name-display">Sajda</div>
                     <div class="divider"></div>
                     <div class="arabic-line">我爱你</div>
                     <div class="divider"></div>
-                    <div class="forever">forever · always · without condition</div>
+                    <div class="forever">forever &nbsp;·&nbsp; always &nbsp;·&nbsp; without condition</div>
                 </div>
             </div>
         </section>
-    </div>
 
+    </div><!-- /main-site -->
+
+    <!-- ══ SABLE MODAL ══ -->
     <div id="sable-modal">
-        <img src="image.png" alt="Sable" class="sable-img">
-        <div class="close-sable" id="close-sable">Close View</div>
+        <div class="modal-inner">
+            <div class="modal-label">a very important someone</div>
+
+            <div class="sable-frame">
+                <img src="image.png" alt="Sable" class="sable-img">
+            </div>
+
+            <div class="modal-caption">
+                <div class="name">Sable</div>
+                <div class="tagline">my favourite little one</div>
+            </div>
+
+            <div class="close-sable" id="close-sable">Close</div>
+        </div>
     </div>
 
     <script>
-        // CURSOR
-        const dot = document.getElementById('cursor-dot');
-        const ring = document.getElementById('cursor-ring');
-        let mx = -200, my = -200, rx = -200, ry = -200, hasMouse = false;
+    // ─── CURSOR ───
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    let mx = -200, my = -200, rx = -200, ry = -200, hasMouse = false;
 
-        document.addEventListener('mousemove', e => {
-            mx = e.clientX; my = e.clientY;
-            if (!hasMouse) {
-                hasMouse = true; document.body.classList.add('has-mouse');
-                dot.style.display = 'block'; ring.style.display = 'block';
+    document.addEventListener('mousemove', e => {
+        mx = e.clientX; my = e.clientY;
+        if (!hasMouse) {
+            hasMouse = true;
+            document.body.classList.add('has-mouse');
+            dot.style.display = ring.style.display = 'block';
+        }
+    });
+
+    (function animCursor() {
+        if (hasMouse) {
+            dot.style.left  = (mx - 3)  + 'px';
+            dot.style.top   = (my - 3)  + 'px';
+            rx += (mx - rx) * 0.13;
+            ry += (my - ry) * 0.13;
+            ring.style.left = (rx - 14) + 'px';
+            ring.style.top  = (ry - 14) + 'px';
+        }
+        requestAnimationFrame(animCursor);
+    })();
+
+    // ─── TRAIL ───
+    const trailCanvas = document.getElementById('trail-canvas');
+    const tctx = trailCanvas.getContext('2d');
+    const trail = [];
+
+    function resizeT() { trailCanvas.width = window.innerWidth; trailCanvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeT); resizeT();
+
+    document.addEventListener('mousemove', e => trail.push({x: e.clientX, y: e.clientY, born: Date.now()}));
+    document.addEventListener('touchmove', e => trail.push({x: e.touches[0].clientX, y: e.touches[0].clientY, born: Date.now()}), {passive: true});
+
+    (function drawTrail() {
+        tctx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+        const now = Date.now();
+        while (trail.length && now - trail[0].born > 600) trail.shift();
+        for (let i = 1; i < trail.length; i++) {
+            const p = trail[i], prev = trail[i-1];
+            const life = 1 - (now - p.born) / 600;
+            const pos  = i / trail.length;
+            const alpha = life * pos * 0.35;
+            if (alpha < 0.01) continue;
+            tctx.beginPath();
+            tctx.moveTo(prev.x, prev.y);
+            tctx.lineTo(p.x, p.y);
+            tctx.strokeStyle = `rgba(201,169,110,${alpha})`;
+            tctx.lineWidth   = pos * 3 * life;
+            tctx.lineCap     = 'round';
+            tctx.stroke();
+            if (i % 4 === 0) {
+                tctx.beginPath();
+                tctx.arc(p.x, p.y, pos * 2.5 * life, 0, Math.PI * 2);
+                tctx.fillStyle = `rgba(255,179,193,${alpha * 0.5})`;
+                tctx.fill();
             }
+        }
+        requestAnimationFrame(drawTrail);
+    })();
+
+    // ─── STARFIELD ───
+    const starCanvas = document.getElementById('starfield');
+    const sctx = starCanvas.getContext('2d');
+
+    function resizeS() { starCanvas.width = window.innerWidth; starCanvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeS); resizeS();
+
+    const stars = Array.from({length: 120}, () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        r: Math.random() * 1.2 + 0.2,
+        speed: Math.random() * 0.003 + 0.001,
+        phase: Math.random() * Math.PI * 2,
+    }));
+
+    let st = 0;
+    (function drawStars() {
+        st += 0.016;
+        sctx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+        stars.forEach(s => {
+            const alpha = 0.15 + 0.5 * (0.5 + 0.5 * Math.sin(st * s.speed * 60 + s.phase));
+            sctx.beginPath();
+            sctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            sctx.fillStyle = `rgba(201,169,110,${alpha})`;
+            sctx.fill();
         });
+        requestAnimationFrame(drawStars);
+    })();
 
-        (function animCursor() {
-            if (hasMouse) {
-                dot.style.left = (mx - 3) + 'px'; dot.style.top = (my - 3) + 'px';
-                rx += (mx - rx) * 0.13; ry += (my - ry) * 0.13;
-                ring.style.left = (rx - 14) + 'px'; ring.style.top = (ry - 14) + 'px';
-            }
-            requestAnimationFrame(animCursor);
-        })();
+    // ─── PASSWORD ───
+    const PASSWORD = '0918';
+    let pinValue = '', unlocked = false;
+    const pinDots = [0,1,2,3].map(i => document.getElementById('d' + i));
+    const lockError = document.getElementById('lock-error');
 
-        // TRAIL
-        const trailCanvas = document.getElementById('trail-canvas');
-        const tctx = trailCanvas.getContext('2d');
-        const trail = [];
-        function resize() { trailCanvas.width = window.innerWidth; trailCanvas.height = window.innerHeight; }
-        window.addEventListener('resize', resize); resize();
-
-        document.addEventListener('mousemove', e => trail.push({x: e.clientX, y: e.clientY, born: Date.now()}));
-        document.addEventListener('touchmove', e => trail.push({x: e.touches[0].clientX, y: e.touches[0].clientY, born: Date.now()}), {passive: true});
-
-        (function drawTrail() {
-            tctx.clearRect(0,0,trailCanvas.width, trailCanvas.height);
-            const now = Date.now();
-            while(trail.length && now - trail[0].born > 600) trail.shift();
-            for(let i=1; i<trail.length; i++) {
-                const p = trail[i], prev = trail[i-1], life = 1 - (now - p.born)/600, pos = i/trail.length;
-                tctx.beginPath(); tctx.moveTo(prev.x, prev.y); tctx.lineTo(p.x, p.y);
-                tctx.strokeStyle = `rgba(201,169,110,${life * pos * 0.35})`;
-                tctx.lineWidth = pos * 3 * life; tctx.stroke();
-            }
-            requestAnimationFrame(drawTrail);
-        })();
-
-        // STARFIELD
-        const starCanvas = document.getElementById('starfield');
-        const sctx = starCanvas.getContext('2d');
-        function resizeS() { starCanvas.width = window.innerWidth; starCanvas.height = window.innerHeight; }
-        window.addEventListener('resize', resizeS); resizeS();
-        const stars = Array.from({length: 100}, () => ({x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight, r: Math.random()*1.2, speed: Math.random()*0.02}));
-        (function drawStars() {
-            sctx.clearRect(0,0,starCanvas.width, starCanvas.height);
-            stars.forEach(s => {
-                sctx.beginPath(); sctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-                sctx.fillStyle = `rgba(201,169,110,${0.2 + Math.abs(Math.sin(Date.now()*s.speed*0.1))})`; sctx.fill();
-            });
-            requestAnimationFrame(drawStars);
-        })();
-
-        // PASSWORD
-        const PASSWORD = '0918';
-        let pinValue = '', unlocked = false;
-        const dots = [0,1,2,3].map(i => document.getElementById('d'+i));
-
-        function pressKey(n) {
-            if(unlocked || pinValue.length >= 4) return;
-            pinValue += n;
-            dots.forEach((d, i) => i < pinValue.length ? d.classList.add('filled') : null);
-            if(pinValue.length === 4) {
-                setTimeout(() => {
-                    if(pinValue === PASSWORD) {
-                        unlocked = true;
-                        document.getElementById('unlock-flash').classList.add('flash');
-                        setTimeout(() => {
-                            document.getElementById('lock-screen').classList.add('unlocking');
-                            document.getElementById('main-site').classList.add('revealed');
-                            initSite();
-                        }, 200);
-                    } else {
-                        dots.forEach(d => { d.classList.remove('filled'); d.classList.add('error'); });
-                        document.getElementById('lock-error').classList.add('show');
-                        setTimeout(() => { dots.forEach(d => d.classList.remove('error')); document.getElementById('lock-error').classList.remove('show'); pinValue = ''; }, 900);
-                    }
-                }, 100);
-            }
+    function pressKey(n) {
+        if (unlocked || pinValue.length >= 4) return;
+        pinValue += n;
+        pinDots.forEach((d, i) => {
+            d.classList.toggle('filled', i < pinValue.length);
+        });
+        if (pinValue.length === 4) {
+            setTimeout(() => {
+                if (pinValue === PASSWORD) {
+                    triggerUnlock();
+                } else {
+                    triggerError();
+                }
+            }, 100);
         }
+    }
 
-        document.querySelectorAll('.num-btn[data-n]').forEach(b => b.onclick = () => pressKey(b.dataset.n));
-        document.getElementById('del-btn').onclick = () => { pinValue = pinValue.slice(0,-1); dots.forEach((d,i) => i >= pinValue.length ? d.classList.remove('filled') : null); };
+    function pressDelete() {
+        if (unlocked) return;
+        pinValue = pinValue.slice(0, -1);
+        pinDots.forEach((d, i) => d.classList.toggle('filled', i < pinValue.length));
+        lockError.classList.remove('show');
+    }
 
-        // MODAL LOGIC
-        const modal = document.getElementById('sable-modal');
-        document.getElementById('open-sable').onclick = () => modal.style.display = 'flex';
-        document.getElementById('close-sable').onclick = () => modal.style.display = 'none';
-        modal.onclick = (e) => e.target === modal ? modal.style.display = 'none' : null;
+    function triggerError() {
+        pinDots.forEach(d => { d.classList.remove('filled'); d.classList.add('error'); });
+        lockError.classList.add('show');
+        pinValue = '';
+        setTimeout(() => {
+            pinDots.forEach(d => d.classList.remove('error'));
+            lockError.classList.remove('show');
+        }, 900);
+    }
 
-        function initSite() {
-            const obs = new IntersectionObserver(entries => entries.forEach(e => e.isIntersecting ? e.target.classList.add('visible') : null), {threshold: 0.2});
-            document.querySelectorAll('.card').forEach(c => obs.observe(c));
-            
-            setInterval(() => {
-                const p = document.createElement('div'); p.className = 'petal';
-                p.style.left = Math.random()*100+'vw'; p.style.width = p.style.height = (Math.random()*5+5)+'px';
-                p.style.background = ['#ffb3c1','#c9184a','#f9c6d0'][Math.floor(Math.random()*3)];
-                p.style.animationDuration = (Math.random()*5+5)+'s';
-                document.body.appendChild(p); setTimeout(() => p.remove(), 10000);
-            }, 800);
-        }
+    function triggerUnlock() {
+        unlocked = true;
+        document.getElementById('unlock-flash').classList.add('flash');
+        setTimeout(() => {
+            document.getElementById('lock-screen').classList.add('unlocking');
+            document.getElementById('main-site').classList.add('revealed');
+            initSite();
+        }, 200);
+    }
+
+    document.querySelectorAll('.num-btn[data-n]').forEach(b => {
+        b.addEventListener('click', () => pressKey(b.dataset.n));
+        b.addEventListener('touchend', e => { e.preventDefault(); pressKey(b.dataset.n); });
+    });
+
+    document.getElementById('del-btn').addEventListener('click', pressDelete);
+    document.getElementById('del-btn').addEventListener('touchend', e => { e.preventDefault(); pressDelete(); });
+
+    document.addEventListener('keydown', e => {
+        if (e.key >= '0' && e.key <= '9') pressKey(e.key);
+        if (e.key === 'Backspace') pressDelete();
+    });
+
+    // ─── SABLE MODAL ───
+    const modal    = document.getElementById('sable-modal');
+    const openBtn  = document.getElementById('open-sable');
+    const closeBtn = document.getElementById('close-sable');
+
+    function openModal() {
+        modal.classList.add('open');
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => modal.classList.add('visible'));
+        });
+    }
+
+    function closeModal() {
+        modal.classList.remove('visible');
+        setTimeout(() => modal.classList.remove('open'), 500);
+    }
+
+    openBtn.addEventListener('click', openModal);
+    openBtn.addEventListener('touchend', e => { e.preventDefault(); openModal(); });
+    closeBtn.addEventListener('click', closeModal);
+    closeBtn.addEventListener('touchend', e => { e.preventDefault(); closeModal(); });
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+    // ─── SITE INIT ───
+    function initSite() {
+        // Card reveal on scroll
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.25 });
+        document.querySelectorAll('.card').forEach(c => obs.observe(c));
+        setTimeout(() => document.getElementById('card1').classList.add('visible'), 350);
+
+        // Sable button fades in after card1 is visible
+        setTimeout(() => {
+            document.getElementById('sable-btn-wrap').classList.add('visible');
+        }, 1000);
+
+        // Petal rain
+        const petalColors = ['#ffb3c1','#ff85a1','#ff4d6d','#c9184a','#f9c6d0'];
+        setInterval(() => {
+            const p = document.createElement('div');
+            p.className = 'petal';
+            const size = Math.random() * 6 + 4;
+            p.style.cssText = `left:${Math.random()*100}vw;top:-20px;width:${size}px;height:${size*1.4}px;background:${petalColors[Math.floor(Math.random()*petalColors.length)]};border-radius:50% 0 50% 0;animation-duration:${Math.random()*8+6}s;animation-delay:${Math.random()*2}s;opacity:0;`;
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 14000);
+        }, 700);
+    }
     </script>
 </body>
 </html>
