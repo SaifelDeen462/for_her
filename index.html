@@ -1,125 +1,390 @@
-<style>
-    /* New Styles for the Sable Modal */
-    .sable-trigger-wrap {
-        margin-top: 20px;
-        opacity: 0;
-        transform: translateY(10px);
-        transition: all 0.8s ease 1s;
-    }
-    .card.visible + .sable-trigger-wrap {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    .btn-sable {
-        background: transparent;
-        border: 1px solid var(--gold);
-        color: var(--gold);
-        font-family: 'Raleway', sans-serif;
-        font-size: 0.6rem;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        padding: 12px 24px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border-radius: 2px;
-    }
-
-    .btn-sable:hover {
-        background: rgba(201, 169, 110, 0.1);
-        box-shadow: 0 0 15px rgba(201, 169, 110, 0.2);
-    }
-
-    #sable-modal {
-        position: fixed;
-        inset: 0;
-        background: rgba(6, 3, 10, 0.95);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        z-index: 200000;
-        display: none;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-    }
-
-    .sable-content {
-        position: relative;
-        max-width: 100%;
-        max-height: 80vh;
-        display: flex;
-        justify-content: center;
-    }
-
-    .sable-img {
-        max-width: 90vw;
-        max-height: 70vh;
-        border: 1px solid rgba(201, 169, 110, 0.3);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        object-fit: contain;
-    }
-
-    .close-sable {
-        margin-top: 30px;
-        color: var(--ivory);
-        font-family: 'Raleway', sans-serif;
-        font-size: 0.55rem;
-        letter-spacing: 5px;
-        text-transform: uppercase;
-        opacity: 0.5;
-        cursor: pointer;
-        border-bottom: 1px solid transparent;
-        transition: 0.3s;
-    }
-
-    .close-sable:hover {
-        opacity: 1;
-        border-color: var(--gold);
-    }
-</style>
-
-<div class="card" id="card1">
-    <div class="eyebrow">A gift for you</div>
-    <div class="headline">Until I can give it<br>to you in real</div>
-    <div class="subtitle">with every intention</div>
-</div>
-
-<div class="sable-trigger-wrap">
-    <button class="btn-sable" id="open-sable">Show Sable</button>
-</div>
-
-<div id="sable-modal">
-    <div class="sable-content">
-        <img src="image_e13146.jpg" alt="Sable" class="sable-img">
-    </div>
-    <div class="close-sable" id="close-sable">Close View</div>
-</div>
-
-<script>
-    // ... your existing cursor, trail, starfield, and lock-screen scripts ...
-
-    // ADD THIS TO YOUR SCRIPT SECTION:
-    const openSable = document.getElementById('open-sable');
-    const closeSable = document.getElementById('close-sable');
-    const sableModal = document.getElementById('sable-modal');
-
-    openSable.addEventListener('click', () => {
-        sableModal.style.display = 'flex';
-        // Optional: stop body scroll when open
-        document.body.style.overflow = 'hidden';
-    });
-
-    closeSable.addEventListener('click', () => {
-        sableModal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    });
-
-    // Close modal if clicking outside the image
-    sableModal.addEventListener('click', (e) => {
-        if (e.target === sableModal) {
-            sableModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>For Sajda</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Raleway:wght@100;200;300&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #06030a;
+            --rose: #c9184a;
+            --blush: #ffb3c1;
+            --ivory: #f5f0eb;
+            --gold: #c9a96e;
+            --midnight: #0d0015;
         }
-    });
-</script>
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+
+        body {
+            background: var(--bg);
+            color: var(--ivory);
+            font-family: 'Cormorant Garamond', serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- Custom Cursor (desktop only) --- */
+        #cursor-dot, #cursor-ring {
+            display: none;
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+        }
+
+        #cursor-dot { width: 6px; height: 6px; background: var(--gold); }
+        #cursor-ring { width: 28px; height: 28px; border: 1px solid rgba(201,169,110,0.5); }
+        body.has-mouse { cursor: none; }
+
+        /* --- Canvases --- */
+        #trail-canvas, #starfield {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+        }
+        #trail-canvas { z-index: 99990; }
+        #starfield    { z-index: 0; }
+
+        /* ══ LOCK SCREEN ══ */
+        #lock-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 9000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg);
+            transition: opacity 1.3s ease, transform 1.3s cubic-bezier(0.77,0,0.18,1);
+            overflow: hidden;
+        }
+
+        #lock-screen.unlocking { opacity: 0; transform: scale(1.07); pointer-events: none; }
+
+        .lock-bg {
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse 70% 60% at 50% 50%, #1a0028 0%, transparent 65%),
+                radial-gradient(ellipse 40% 40% at 80% 20%, rgba(201,24,74,0.04) 0%, transparent 60%);
+        }
+
+        .lock-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(201,169,110,0.07);
+            animation: spinSlow 22s linear infinite;
+        }
+        .lock-ring:nth-child(2) { width: min(340px, 80vw); height: min(340px, 80vw); }
+        .lock-ring:nth-child(3) { width: min(480px, 110vw); height: min(480px, 110vw); animation-duration: 35s; animation-direction: reverse; border-color: rgba(201,169,110,0.04); }
+
+        @keyframes spinSlow { to { transform: rotate(360deg); } }
+
+        .lock-inner {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 22px;
+            width: 100%;
+            padding: 0 24px;
+        }
+
+        .lock-icon { animation: breathe 4s ease-in-out infinite; }
+        .lock-icon svg { width: 34px; height: 34px; }
+
+        @keyframes breathe {
+            0%,100% { opacity: 0.3; transform: scale(1); }
+            50%      { opacity: 0.65; transform: scale(1.06); }
+        }
+
+        .lock-hint { text-align: center; }
+        .lock-eyebrow { font-family: 'Raleway', sans-serif; font-weight: 100; font-size: 0.55rem; letter-spacing: 8px; text-transform: uppercase; color: var(--gold); opacity: 0.45; margin-bottom: 14px; }
+        .lock-chinese { font-size: clamp(1.8rem, 8vw, 2.6rem); font-weight: 300; color: var(--ivory); opacity: 0.75; letter-spacing: 6px; }
+        .lock-subhint { font-family: 'Raleway', sans-serif; font-weight: 100; font-size: 0.5rem; letter-spacing: 4px; text-transform: uppercase; color: var(--blush); opacity: 0.3; margin-top: 10px; }
+
+        .pin-dots { display: flex; gap: 20px; }
+        .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(201,169,110,0.35); background: transparent; transition: all 0.2s; }
+        .pin-dot.filled { background: var(--gold); border-color: var(--gold); transform: scale(1.2); box-shadow: 0 0 10px rgba(201,169,110,0.4); }
+        .pin-dot.error { background: var(--rose); border-color: var(--rose); animation: shake 0.45s ease; }
+
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-7px); }
+            40%, 80% { transform: translateX(7px); }
+        }
+
+        .lock-error { font-family: 'Raleway', sans-serif; font-size: 0.5rem; letter-spacing: 6px; text-transform: uppercase; color: var(--rose); opacity: 0; transition: opacity 0.4s; height: 14px; }
+        .lock-error.show { opacity: 0.65; }
+
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: min(280px, 85vw); margin-top: 4px; }
+        .num-btn { aspect-ratio: 1; border: 1px solid rgba(201,169,110,0.18); border-radius: 50%; background: rgba(255,255,255,0.03); color: var(--ivory); font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 300; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent; }
+        .num-btn:active { background: rgba(201,169,110,0.15); border-color: rgba(201,169,110,0.5); transform: scale(0.92); }
+        .num-btn.empty { background: transparent; border-color: transparent; pointer-events: none; }
+        .num-btn.del-btn { font-size: 1rem; opacity: 0.6; }
+
+        #unlock-flash { position: fixed; inset: 0; z-index: 8999; background: radial-gradient(ellipse at 50% 50%, rgba(201,169,110,0.3) 0%, transparent 70%); opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
+        #unlock-flash.flash { opacity: 1; }
+
+        /* ══ MAIN SITE ══ */
+        #main-site { opacity: 0; pointer-events: none; transition: opacity 1.5s ease 0.7s; }
+        #main-site.revealed { opacity: 1; pointer-events: all; }
+
+        section { height: 100vh; width: 100vw; display: flex; flex-direction: column; justify-content: center; align-items: center; scroll-snap-align: start; position: relative; overflow: hidden; }
+
+        .content { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: clamp(20px, 4vw, 40px); padding: 0 20px; }
+
+        .flower-wrap { animation: float 7s ease-in-out infinite; filter: drop-shadow(0 30px 60px rgba(201,24,74,0.25)); transform-origin: bottom center; }
+        @keyframes float { 0%,100% { transform: translateY(0px) rotate(-1deg); } 50% { transform: translateY(-18px) rotate(1deg); } }
+        .flower-svg { width: clamp(140px, 40vw, 220px); height: auto; }
+
+        .stem { width: 4px; height: clamp(100px, 22vw, 160px); background: linear-gradient(to bottom, #2d6a4f, #0c1f0e); border-radius: 10px; margin: 0 auto; position: relative; }
+        .leaf { position: absolute; width: 52px; height: 24px; background: linear-gradient(135deg, #2d6a4f, #1b4332); border-radius: 0 80% 0 80%; box-shadow: inset -4px -4px 8px rgba(0,0,0,0.4); }
+        .leaf-l { top: 30px; left: -46px; transform: rotate(-25deg); }
+        .leaf-r { top: 65px; left: 4px; transform: rotate(205deg); }
+
+        .card { text-align: center; padding: clamp(22px, 5vw, 36px); background: rgba(255,255,255,0.025); backdrop-filter: blur(20px); border-radius: 2px; border: 1px solid rgba(201,169,110,0.15); max-width: min(520px, 92vw); opacity: 0; transform: translateY(30px); transition: all 0.9s ease; }
+        .card.visible { opacity: 1; transform: translateY(0); }
+
+        .eyebrow { font-family: 'Raleway', sans-serif; font-size: 0.6rem; letter-spacing: 8px; text-transform: uppercase; color: var(--gold); opacity: 0.7; margin-bottom: 14px; }
+        .headline { font-weight: 300; font-size: clamp(1.4rem, 5vw, 2rem); line-height: 1.3; color: var(--ivory); }
+        .subtitle { font-style: italic; font-size: clamp(0.85rem, 3vw, 1.05rem); color: var(--blush); letter-spacing: 2px; margin-top: 12px; opacity: 0.85; }
+
+        /* --- Sable Button Styles --- */
+        .sable-trigger-wrap { margin-top: 10px; opacity: 0; transform: translateY(10px); transition: all 0.8s ease 1.2s; }
+        .card.visible + .sable-trigger-wrap { opacity: 1; transform: translateY(0); }
+
+        .btn-sable { background: transparent; border: 1px solid var(--gold); color: var(--gold); font-family: 'Raleway', sans-serif; font-size: 0.65rem; letter-spacing: 4px; text-transform: uppercase; padding: 14px 28px; cursor: pointer; transition: all 0.3s; border-radius: 2px; }
+        .btn-sable:hover { background: rgba(201,169,110,0.1); box-shadow: 0 0 15px rgba(201,169,110,0.2); }
+
+        /* --- Sable Modal --- */
+        #sable-modal { position: fixed; inset: 0; background: rgba(6, 3, 10, 0.97); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 200000; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+        .sable-img { max-width: 90vw; max-height: 70vh; border: 1px solid rgba(201, 169, 110, 0.3); box-shadow: 0 30px 60px rgba(0,0,0,0.6); object-fit: contain; }
+        .close-sable { margin-top: 40px; color: var(--ivory); font-family: 'Raleway', sans-serif; font-size: 0.6rem; letter-spacing: 6px; text-transform: uppercase; opacity: 0.5; cursor: pointer; padding: 10px; }
+
+        /* Sections 2 & 3 Styles */
+        #sec1 .bg-layer { background: radial-gradient(ellipse 60% 60% at 50% 40%, #1a0028 0%, transparent 70%); }
+        .name-display { font-size: clamp(2.8rem, 12vw, 5rem); font-weight: 300; letter-spacing: 12px; text-transform: uppercase; line-height: 1; }
+        .arabic-line { font-size: clamp(1.3rem, 5vw, 1.8rem); color: var(--gold); letter-spacing: 3px; font-style: italic; opacity: 0.9; }
+        .divider { width: 80px; height: 1px; background: linear-gradient(to right, transparent, var(--gold), transparent); margin: 18px auto; }
+        .forever { font-family: 'Raleway', sans-serif; font-size: 0.65rem; letter-spacing: 10px; text-transform: uppercase; color: var(--blush); opacity: 0.6; }
+
+        .scroll-hint { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 10; }
+        .scroll-hint span { font-family: 'Raleway', sans-serif; font-size: 0.5rem; letter-spacing: 6px; text-transform: uppercase; color: rgba(201,169,110,0.4); animation: fadeUD 2.5s ease-in-out infinite; }
+        .scroll-line { width: 1px; height: 36px; background: linear-gradient(to bottom, rgba(201,169,110,0.4), transparent); animation: fadeUD 2.5s ease-in-out infinite reverse; }
+        @keyframes fadeUD { 0%,100% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 0.7; transform: translateY(4px); } }
+
+        .petal { position: fixed; pointer-events: none; z-index: 1; opacity: 0; animation: petalFall linear infinite; }
+        @keyframes petalFall { 0% { opacity: 0; transform: translateY(-20px) rotate(0deg); } 10% { opacity: 0.6; } 100% { opacity: 0; transform: translateY(110vh) rotate(720deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+    <canvas id="trail-canvas"></canvas>
+    <canvas id="starfield"></canvas>
+    <div id="unlock-flash"></div>
+
+    <div id="lock-screen">
+        <div class="lock-bg"></div>
+        <div class="lock-ring"></div>
+        <div class="lock-ring"></div>
+        <div class="lock-inner">
+            <div class="lock-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1.2">
+                    <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+            </div>
+            <div class="lock-hint">
+                <div class="lock-eyebrow">enter to unlock</div>
+                <div class="lock-chinese">我的生日</div>
+                <div class="lock-subhint">hint · my birthday</div>
+            </div>
+            <div class="pin-dots">
+                <div class="pin-dot" id="d0"></div><div class="pin-dot" id="d1"></div><div class="pin-dot" id="d2"></div><div class="pin-dot" id="d3"></div>
+            </div>
+            <div class="lock-error" id="lock-error">incorrect</div>
+            <div class="numpad" id="numpad">
+                <button class="num-btn" data-n="1">1</button><button class="num-btn" data-n="2">2</button><button class="num-btn" data-n="3">3</button>
+                <button class="num-btn" data-n="4">4</button><button class="num-btn" data-n="5">5</button><button class="num-btn" data-n="6">6</button>
+                <button class="num-btn" data-n="7">7</button><button class="num-btn" data-n="8">8</button><button class="num-btn" data-n="9">9</button>
+                <button class="num-btn empty"></button><button class="num-btn" data-n="0">0</button><button class="num-btn del-btn" id="del-btn">⌫</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-site">
+        <section id="sec1">
+            <div class="content">
+                <div class="flower-wrap">
+                    <svg class="flower-svg" viewBox="0 0 100 120">
+                        <defs>
+                            <linearGradient id="tg1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ffb3c1"/><stop offset="100%" stop-color="#c9184a"/></linearGradient>
+                            <linearGradient id="tg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ff4d6d"/><stop offset="100%" stop-color="#800e13"/></linearGradient>
+                        </defs>
+                        <path d="M50 95 Q18 88 8 52 Q8 18 38 28 Q28 62 50 95" fill="url(#tg1)" opacity="0.9"/>
+                        <path d="M50 95 Q82 88 92 52 Q92 18 62 28 Q72 62 50 95" fill="url(#tg1)" opacity="0.9"/>
+                        <path d="M50 98 Q33 88 28 52 Q28 8 50 3 Q72 8 72 52 Q67 88 50 98" fill="url(#tg2)"/>
+                    </svg>
+                    <div class="stem"><div class="leaf leaf-l"></div><div class="leaf leaf-r"></div></div>
+                </div>
+                <div class="card" id="card1">
+                    <div class="eyebrow">A gift for you</div>
+                    <div class="headline">Until I can give it<br>to you in real</div>
+                    <div class="subtitle">with every intention</div>
+                </div>
+                <div class="sable-trigger-wrap">
+                    <button class="btn-sable" id="open-sable">Show Sable</button>
+                </div>
+            </div>
+            <div class="scroll-hint"><span>scroll</span><div class="scroll-line"></div></div>
+        </section>
+
+        <section id="sec2">
+            <div class="content">
+                <div class="card" id="card2">
+                    <div class="eyebrow">always &amp; truly</div>
+                    <div class="headline">You make my life<br>worth living</div>
+                    <div class="subtitle">and I mean every word</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec3">
+            <div class="content">
+                <div class="card" id="card3">
+                    <div class="eyebrow">with all of me</div>
+                    <div class="name-display">Sajda</div>
+                    <div class="divider"></div>
+                    <div class="arabic-line">我爱你</div>
+                    <div class="divider"></div>
+                    <div class="forever">forever · always · without condition</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="sable-modal">
+        <img src="image.png" alt="Sable" class="sable-img">
+        <div class="close-sable" id="close-sable">Close View</div>
+    </div>
+
+    <script>
+        // CURSOR
+        const dot = document.getElementById('cursor-dot');
+        const ring = document.getElementById('cursor-ring');
+        let mx = -200, my = -200, rx = -200, ry = -200, hasMouse = false;
+
+        document.addEventListener('mousemove', e => {
+            mx = e.clientX; my = e.clientY;
+            if (!hasMouse) {
+                hasMouse = true; document.body.classList.add('has-mouse');
+                dot.style.display = 'block'; ring.style.display = 'block';
+            }
+        });
+
+        (function animCursor() {
+            if (hasMouse) {
+                dot.style.left = (mx - 3) + 'px'; dot.style.top = (my - 3) + 'px';
+                rx += (mx - rx) * 0.13; ry += (my - ry) * 0.13;
+                ring.style.left = (rx - 14) + 'px'; ring.style.top = (ry - 14) + 'px';
+            }
+            requestAnimationFrame(animCursor);
+        })();
+
+        // TRAIL
+        const trailCanvas = document.getElementById('trail-canvas');
+        const tctx = trailCanvas.getContext('2d');
+        const trail = [];
+        function resize() { trailCanvas.width = window.innerWidth; trailCanvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+
+        document.addEventListener('mousemove', e => trail.push({x: e.clientX, y: e.clientY, born: Date.now()}));
+        document.addEventListener('touchmove', e => trail.push({x: e.touches[0].clientX, y: e.touches[0].clientY, born: Date.now()}), {passive: true});
+
+        (function drawTrail() {
+            tctx.clearRect(0,0,trailCanvas.width, trailCanvas.height);
+            const now = Date.now();
+            while(trail.length && now - trail[0].born > 600) trail.shift();
+            for(let i=1; i<trail.length; i++) {
+                const p = trail[i], prev = trail[i-1], life = 1 - (now - p.born)/600, pos = i/trail.length;
+                tctx.beginPath(); tctx.moveTo(prev.x, prev.y); tctx.lineTo(p.x, p.y);
+                tctx.strokeStyle = `rgba(201,169,110,${life * pos * 0.35})`;
+                tctx.lineWidth = pos * 3 * life; tctx.stroke();
+            }
+            requestAnimationFrame(drawTrail);
+        })();
+
+        // STARFIELD
+        const starCanvas = document.getElementById('starfield');
+        const sctx = starCanvas.getContext('2d');
+        function resizeS() { starCanvas.width = window.innerWidth; starCanvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeS); resizeS();
+        const stars = Array.from({length: 100}, () => ({x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight, r: Math.random()*1.2, speed: Math.random()*0.02}));
+        (function drawStars() {
+            sctx.clearRect(0,0,starCanvas.width, starCanvas.height);
+            stars.forEach(s => {
+                sctx.beginPath(); sctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+                sctx.fillStyle = `rgba(201,169,110,${0.2 + Math.abs(Math.sin(Date.now()*s.speed*0.1))})`; sctx.fill();
+            });
+            requestAnimationFrame(drawStars);
+        })();
+
+        // PASSWORD
+        const PASSWORD = '0918';
+        let pinValue = '', unlocked = false;
+        const dots = [0,1,2,3].map(i => document.getElementById('d'+i));
+
+        function pressKey(n) {
+            if(unlocked || pinValue.length >= 4) return;
+            pinValue += n;
+            dots.forEach((d, i) => i < pinValue.length ? d.classList.add('filled') : null);
+            if(pinValue.length === 4) {
+                setTimeout(() => {
+                    if(pinValue === PASSWORD) {
+                        unlocked = true;
+                        document.getElementById('unlock-flash').classList.add('flash');
+                        setTimeout(() => {
+                            document.getElementById('lock-screen').classList.add('unlocking');
+                            document.getElementById('main-site').classList.add('revealed');
+                            initSite();
+                        }, 200);
+                    } else {
+                        dots.forEach(d => { d.classList.remove('filled'); d.classList.add('error'); });
+                        document.getElementById('lock-error').classList.add('show');
+                        setTimeout(() => { dots.forEach(d => d.classList.remove('error')); document.getElementById('lock-error').classList.remove('show'); pinValue = ''; }, 900);
+                    }
+                }, 100);
+            }
+        }
+
+        document.querySelectorAll('.num-btn[data-n]').forEach(b => b.onclick = () => pressKey(b.dataset.n));
+        document.getElementById('del-btn').onclick = () => { pinValue = pinValue.slice(0,-1); dots.forEach((d,i) => i >= pinValue.length ? d.classList.remove('filled') : null); };
+
+        // MODAL LOGIC
+        const modal = document.getElementById('sable-modal');
+        document.getElementById('open-sable').onclick = () => modal.style.display = 'flex';
+        document.getElementById('close-sable').onclick = () => modal.style.display = 'none';
+        modal.onclick = (e) => e.target === modal ? modal.style.display = 'none' : null;
+
+        function initSite() {
+            const obs = new IntersectionObserver(entries => entries.forEach(e => e.isIntersecting ? e.target.classList.add('visible') : null), {threshold: 0.2});
+            document.querySelectorAll('.card').forEach(c => obs.observe(c));
+            
+            setInterval(() => {
+                const p = document.createElement('div'); p.className = 'petal';
+                p.style.left = Math.random()*100+'vw'; p.style.width = p.style.height = (Math.random()*5+5)+'px';
+                p.style.background = ['#ffb3c1','#c9184a','#f9c6d0'][Math.floor(Math.random()*3)];
+                p.style.animationDuration = (Math.random()*5+5)+'s';
+                document.body.appendChild(p); setTimeout(() => p.remove(), 10000);
+            }, 800);
+        }
+    </script>
+</body>
+</html>
