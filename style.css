@@ -114,3 +114,15 @@ body, html {
     0%, 100% { opacity: 0.3; transform: scale(1); }
     50% { opacity: 1; transform: scale(1.2); }
 }
+
+#sec4 .bg-layer { background: radial-gradient(ellipse 60% 50% at 50% 50%, #1a0028 0%, transparent 70%); }
+
+.shawkia-video {
+    display: block;
+    width: 100%;
+    max-height: 60vh;
+    background: #000;
+    border: 1px solid rgba(201,169,110,0.15);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+    cursor: auto; /* your custom cursor hides the real one, so the video controls need this */
+}
